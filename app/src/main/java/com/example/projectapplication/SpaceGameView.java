@@ -2,21 +2,17 @@ package com.example.projectapplication;
 
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import java.io.IOException;
+
+import java.util.ArrayList;
 
 public class SpaceGameView extends SurfaceView implements Runnable{
 
@@ -57,7 +53,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
 
     private Spaceship spaceShip;
-    private Bullet bullet;
+    private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     private Bitmap bitmapback;
 
 
@@ -89,7 +85,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private void initLevel(){
 
         spaceShip = new Spaceship(context, screenX, screenY);
-        bullet = new Bullet(context, screenY,screenX);
+        bulletList.add(new Bullet(context, screenY, screenX));
     }
 
 
@@ -124,10 +120,10 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private void update(){
 
         //spaceShip.update(fps);
-
-        if(bullet.getStatus())
-            bullet.update(fps);
-
+        for (int i=0; i<bulletList.size(); i++) {
+            if (bulletList.get(i).getStatus())
+                bulletList.get(i).update(fps);
+        }
         checkCollisions();
 
     }
@@ -143,17 +139,17 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         //       spaceShip.setY(0);
         //   if (spaceShip.getY() < 0 + spaceShip.getLength())
         //       spaceShip.setY(screenY);
+    for(int i=0; i< bulletList.size(); i++) {
+        if (bulletList.get(i).getImpactPointY() < 0)
+            bulletList.get(i).setInactive();
+        if (bulletList.get(i).getImpactPointY() > screenY)
+            bulletList.get(i).setInactive();
 
-        if(bullet.getImpactPointY() < 0)
-            bullet.setInactive();
-        if(bullet.getImpactPointY() > screenY)
-            bullet.setInactive();
-
-        if(bullet.getImpactPointX() < 0)
-            bullet.setInactive();
-        if(bullet.getImpactPointX() > screenX)
-            bullet.setInactive();
-
+        if (bulletList.get(i).getImpactPointX() < 0)
+            bulletList.get(i).setInactive();
+        if (bulletList.get(i).getImpactPointX() > screenX)
+            bulletList.get(i).setInactive();
+    }
     }
 
 
@@ -176,8 +172,10 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             //  canvas.drawBitmap(background.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
             //  draw the defender
             canvas.drawBitmap(bitmapback, 0, 0, paint);
-            if(bullet.getStatus())
-                canvas.drawBitmap(bullet.getBitmapBullet(), bullet.getRect().left, bullet.getRect().top, paint);
+            for(int i=0; i< bulletList.size(); i++) {
+                if (bulletList.get(i).getStatus())
+                    canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
+            }
             canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
 
 
@@ -236,7 +234,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                 paused = false;
                 spaceShip.setX((int)motionEvent.getX());
                 spaceShip.setY((int)motionEvent.getY());
-                bullet.shoot(spaceShip.getX(),spaceShip.getY()+ spaceShip.getHeight()/2,0);
+                bulletList.get(0).shoot(spaceShip.getX(),spaceShip.getY()+ spaceShip.getHeight()/2,0);
 
 
                 break;
