@@ -6,12 +6,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class SpaceGameView extends SurfaceView implements Runnable{
@@ -51,7 +54,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     // Lives
     private int lives = 4;
 
-
+    long lastTime = 0;
     private Spaceship spaceShip;
     private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     private Bitmap bitmapback;
@@ -85,7 +88,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private void initLevel(){
 
         spaceShip = new Spaceship(context, screenX, screenY);
-        bulletList.add(new Bullet(context, screenY, screenX));
+        //bulletList.add(new Bullet(context, screenY, screenX));
     }
 
 
@@ -139,16 +142,25 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         //       spaceShip.setY(0);
         //   if (spaceShip.getY() < 0 + spaceShip.getLength())
         //       spaceShip.setY(screenY);
-    for(int i=0; i< bulletList.size(); i++) {
-        if (bulletList.get(i).getImpactPointY() < 0)
-            bulletList.get(i).setInactive();
-        if (bulletList.get(i).getImpactPointY() > screenY)
-            bulletList.get(i).setInactive();
-
-        if (bulletList.get(i).getImpactPointX() < 0)
-            bulletList.get(i).setInactive();
-        if (bulletList.get(i).getImpactPointX() > screenX)
-            bulletList.get(i).setInactive();
+        int i=0;
+    while(i< bulletList.size()) {
+        if (bulletList.get(i).getImpactPointY() < 0) {
+            bulletList.remove(i);
+            continue;
+        }
+        if (bulletList.get(i).getImpactPointY() > screenY) {
+            bulletList.remove(i);
+            continue;
+        }
+        if (bulletList.get(i).getImpactPointX() < 0) {
+            bulletList.remove(i);
+            continue;
+        }
+        if (bulletList.get(i).getImpactPointX() > screenX) {
+            bulletList.remove(i);
+            continue;
+        }
+        i++;
     }
     }
 
@@ -232,9 +244,14 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
 
                 paused = false;
-                spaceShip.setX((int)motionEvent.getX());
-                spaceShip.setY((int)motionEvent.getY());
-                bulletList.get(0).shoot(spaceShip.getX(),spaceShip.getY()+ spaceShip.getHeight()/2,0);
+                spaceShip.setX((int) motionEvent.getX());
+                spaceShip.setY((int) motionEvent.getY());
+                if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
+                    bulletList.add(new Bullet(context, screenY, screenX));
+                    bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX(), spaceShip.getY() + spaceShip.getHeight() / 2, 0);
+                    lastTime = LocalTime.now().toNanoOfDay() / 1000000;
+                }
+                //bulletList.get(0).shoot(spaceShip.getX(),spaceShip.getY()+ spaceShip.getHeight()/2,0);
 
 
                 break;
@@ -248,6 +265,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                 break;
         }
         return true;
+
     }
 
 
