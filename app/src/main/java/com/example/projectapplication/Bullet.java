@@ -1,5 +1,8 @@
 package com.example.projectapplication;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
 public class Bullet {
@@ -9,6 +12,11 @@ public class Bullet {
 
     private RectF rect;
 
+    public Bitmap getBitmapBullet() {
+        return bitmapBullet;
+    }
+
+    private Bitmap bitmapBullet;
     // Which way is it shooting
     public int UP = 0;
     public int DOWN = 1;
@@ -24,9 +32,10 @@ public class Bullet {
 
     private boolean isActive;
 
-    public Bullet(int screenY, int screenX) {
+    public Bullet(Context context, int screenY, int screenX) {
 
         //  height = screenY / 20;
+        bitmapBullet = BitmapFactory.decodeResource(context.getResources(), R.drawable.bullet1);
         isActive = false;
         this.screenX =screenX;
         this.screenY = screenY;

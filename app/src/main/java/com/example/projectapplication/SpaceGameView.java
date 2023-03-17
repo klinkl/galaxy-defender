@@ -89,7 +89,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     private void initLevel(){
 
         spaceShip = new Spaceship(context, screenX, screenY);
-        bullet = new Bullet(screenY,screenX);
+        bullet = new Bullet(context, screenY,screenX);
     }
 
 
@@ -99,7 +99,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             score = 10;
             // Capture the current time in milliseconds in startFrameTime
             long startFrameTime = System.currentTimeMillis();
-
             // Update the frame
             if(!paused){
                 update();
@@ -124,7 +123,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     private void update(){
 
-        spaceShip.update(fps);
+        //spaceShip.update(fps);
 
         if(bullet.getStatus())
             bullet.update(fps);
@@ -177,11 +176,12 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             //  canvas.drawBitmap(background.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
             //  draw the defender
             canvas.drawBitmap(bitmapback, 0, 0, paint);
+            if(bullet.getStatus())
+                canvas.drawBitmap(bullet.getBitmapBullet(), bullet.getRect().left, bullet.getRect().top, paint);
             canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
 
 
-            if(bullet.getStatus())
-                canvas.drawRect(bullet.getRect(), paint);
+
 
 
             // Draw the score and remaining lives
