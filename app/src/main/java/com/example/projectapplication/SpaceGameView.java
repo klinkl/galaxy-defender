@@ -104,6 +104,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             }
 
             // Draw the frame
+            shoot();
             draw();
 
             // Calculate the fps this frame
@@ -205,7 +206,13 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         }
     }
 
-
+public void shoot(){
+    if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
+        bulletList.add(new Bullet(context, screenY, screenX));
+        bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX(), spaceShip.getY() + spaceShip.getHeight() / 2, 0);
+        lastTime = LocalTime.now().toNanoOfDay() / 1000000;
+    }
+}
 
 
     // If SpaceGameActivity is paused/stopped
@@ -246,11 +253,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                 paused = false;
                 spaceShip.setX((int) motionEvent.getX());
                 spaceShip.setY((int) motionEvent.getY());
-                if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
-                    bulletList.add(new Bullet(context, screenY, screenX));
-                    bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX(), spaceShip.getY() + spaceShip.getHeight() / 2, 0);
-                    lastTime = LocalTime.now().toNanoOfDay() / 1000000;
-                }
+
                 //bulletList.get(0).shoot(spaceShip.getX(),spaceShip.getY()+ spaceShip.getHeight()/2,0);
 
 
