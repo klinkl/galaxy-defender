@@ -10,7 +10,7 @@ public class Bullet {
     private float x;
     private float y;
 
-    private RectF rect;
+    private RectF rect;// cos we wanna take the position of the img and translate into rectangle
 
     public Bitmap getBitmapBullet() {
         return bitmapBullet;
@@ -38,12 +38,14 @@ public class Bullet {
         bitmapBullet = BitmapFactory.decodeResource(context.getResources(), R.drawable.bullet1);
         isActive = false;
         this.screenX =screenX;
-        this.screenY = screenY;
-        this.rect = new RectF();
+        this.screenY = screenY;// of the button right hand corner
+        //so top left is 0,0
+        //based on that we can create the bullet
+        this.rect = new RectF();// we create a new rect to detect the collision
     }
 
     public boolean shoot(float startX, float startY, int direction) {
-        if (!isActive) {
+        if (!isActive) { // update methode
 
             x = startX;
             y = startY;

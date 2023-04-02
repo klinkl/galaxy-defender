@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
 import android.util.Log;
 import android.util.TimeUtils;
 import android.view.MotionEvent;
@@ -193,8 +194,6 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
 
 
-
-
             // Draw the score and remaining lives
             // Change the brush color
             paint.setColor(Color.argb(255,  249, 129, 0));
@@ -207,10 +206,12 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     }
 
 public void shoot(){
-    if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
-        bulletList.add(new Bullet(context, screenY, screenX));
-        bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX(), spaceShip.getY() + spaceShip.getHeight() / 2, 0);
-        lastTime = LocalTime.now().toNanoOfDay() / 1000000;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
+            bulletList.add(new Bullet(context, screenY, screenX));
+            bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX(), spaceShip.getY() + spaceShip.getHeight() / 2, 0);
+            lastTime = LocalTime.now().toNanoOfDay() / 1000000;
+        }
     }
 }
 
