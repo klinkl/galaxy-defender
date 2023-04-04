@@ -17,7 +17,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class SpaceGameView extends SurfaceView implements Runnable{
+public class SpaceGameView extends SurfaceView implements Runnable {
 
     private Context context;
 
@@ -79,13 +79,11 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         screenY = y;
 
 
-
         initLevel();
     }
 
 
-
-    private void initLevel(){
+    private void initLevel() {
 
         spaceShip = new Spaceship(context, screenX, screenY);
         //bulletList.add(new Bullet(context, screenY, screenX));
@@ -99,7 +97,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             // Capture the current time in milliseconds in startFrameTime
             long startFrameTime = System.currentTimeMillis();
             // Update the frame
-            if(!paused){
+            if (!paused) {
                 update();
             }
 
@@ -120,11 +118,10 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     }
 
 
-
-    private void update(){
+    private void update() {
 
         //spaceShip.update(fps);
-        for (int i=0; i<bulletList.size(); i++) {
+        for (int i = 0; i < bulletList.size(); i++) {
             if (bulletList.get(i).getStatus())
                 bulletList.get(i).update(fps);
         }
@@ -133,7 +130,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     }
 
 
-    private void checkCollisions(){
+    private void checkCollisions() {
         //  if (spaceShip.getX() > screenX - spaceShip.getLength())
         //     spaceShip.setX(0);
         //  if (spaceShip.getX() < 0 + spaceShip.getLength())
@@ -143,32 +140,30 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         //       spaceShip.setY(0);
         //   if (spaceShip.getY() < 0 + spaceShip.getLength())
         //       spaceShip.setY(screenY);
-        int i=0;
-    while(i< bulletList.size()) {
-        if (bulletList.get(i).getImpactPointY() < 0) {
-            bulletList.remove(i);
-            continue;
+        int i = 0;
+        while (i < bulletList.size()) {
+            if (bulletList.get(i).getImpactPointY() < 0) {
+                bulletList.remove(i);
+                continue;
+            }
+            if (bulletList.get(i).getImpactPointY() > screenY) {
+                bulletList.remove(i);
+                continue;
+            }
+            if (bulletList.get(i).getImpactPointX() < 0) {
+                bulletList.remove(i);
+                continue;
+            }
+            if (bulletList.get(i).getImpactPointX() > screenX) {
+                bulletList.remove(i);
+                continue;
+            }
+            i++;
         }
-        if (bulletList.get(i).getImpactPointY() > screenY) {
-            bulletList.remove(i);
-            continue;
-        }
-        if (bulletList.get(i).getImpactPointX() < 0) {
-            bulletList.remove(i);
-            continue;
-        }
-        if (bulletList.get(i).getImpactPointX() > screenX) {
-            bulletList.remove(i);
-            continue;
-        }
-        i++;
     }
-    }
 
 
-
-
-    private void draw(){
+    private void draw() {
         // Make sure our drawing surface is valid or we crash
         if (ourHolder.getSurface().isValid()) {
             // Lock the canvas ready to draw
@@ -178,41 +173,38 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             canvas.drawColor(Color.argb(255, 26, 128, 182));
 
             // Choose the brush color for drawing
-            paint.setColor(Color.argb(255,  255, 255, 255));
+            paint.setColor(Color.argb(255, 255, 255, 255));
 
             bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);
-            bitmapback = Bitmap.createScaledBitmap(bitmapback, (int) (screenX), (int) (screenY),false);
+            bitmapback = Bitmap.createScaledBitmap(bitmapback, (int) (screenX), (int) (screenY), false);
             //  canvas.drawBitmap(background.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
             //  draw the defender
             canvas.drawBitmap(bitmapback, 0, 0, paint);
-            for(int i=0; i< bulletList.size(); i++) {
+            for (int i = 0; i < bulletList.size(); i++) {
                 if (bulletList.get(i).getStatus())
                     canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
             }
-            canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
-
-
-
+            canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
 
             // Draw the score and remaining lives
             // Change the brush color
-            paint.setColor(Color.argb(255,  249, 129, 0));
+            paint.setColor(Color.argb(255, 249, 129, 0));
             paint.setTextSize(40);
-            canvas.drawText("Score: " + score + "   Lives: " + lives + "    FPS: " + fps, 10,50, paint);
+            canvas.drawText("Score: " + score + "   Lives: " + lives + "    FPS: " + fps, 10, 50, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
 
-public void shoot(){
-    if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
-        bulletList.add(new Bullet(context, screenY, screenX));
-        bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX(), spaceShip.getY() + spaceShip.getHeight() / 2, 0);
-        lastTime = LocalTime.now().toNanoOfDay() / 1000000;
+    public void shoot() {
+        if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
+            bulletList.add(new Bullet(context, screenY, screenX));
+            bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX(), spaceShip.getY() + spaceShip.getHeight() / 2, 0);
+            lastTime = LocalTime.now().toNanoOfDay() / 1000000;
+        }
     }
-}
 
 
     // If SpaceGameActivity is paused/stopped
@@ -226,7 +218,6 @@ public void shoot(){
         }
 
     }
-
 
 
     // If SpaceInvadersActivity is started then
@@ -251,6 +242,7 @@ public void shoot(){
 
 
                 paused = false;
+                //Spaceship follows touch input
                 spaceShip.setX((int) motionEvent.getX());
                 spaceShip.setY((int) motionEvent.getY());
 
@@ -263,16 +255,13 @@ public void shoot(){
             case MotionEvent.ACTION_UP:
 
                 //   if(motionEvent.getY() > screenY - screenY / 10) {
-                spaceShip.setMovementState(spaceShip.STOPPED);
+                //spaceShip.setMovementState(spaceShip.STOPPED);
                 //   }
                 break;
         }
         return true;
 
     }
-
-
-
 
 
 }  // end class
