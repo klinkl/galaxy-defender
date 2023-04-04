@@ -12,7 +12,7 @@ public class Meteor {
     Random random;
 
     public Meteor (Context context) {
-        meteor = BitmapFactory.decodeResource(context.getResources(), R.drawable.spaceship4);
+        meteor = BitmapFactory.decodeResource(context.getResources(), R.drawable.a10000);
         random = new Random();
         resetPosition();
     }
@@ -21,7 +21,7 @@ public class Meteor {
         meteorX = random.nextInt(600);
 
         meteorY = random.nextInt(600) * -1;
-        meteorSpeed = 15 + random.nextInt(16);
+        meteorSpeed = 20 + random.nextInt(16);
         meteorOffset = random.nextInt(40) - 20;
         if (meteorX <= 150) {
             meteorX = -100;

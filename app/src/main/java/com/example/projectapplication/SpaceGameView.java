@@ -67,6 +67,8 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     static int dWidth, dHeight;
 
+    int totalMeteors;
+
 
     // This special constructor method runs
     public SpaceGameView(Context context, int x, int y) {
@@ -90,7 +92,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         meteors = new ArrayList<>();
 
-        for (int i=0;i<4;i++) {
+        for (int i=0;i<5;i++) {
             Meteor meteor = new Meteor(context);
             meteors.add(meteor);
         }
@@ -102,6 +104,7 @@ public class SpaceGameView extends SurfaceView implements Runnable{
         dWidth = point.x;
         dHeight = point.y;
 
+        totalMeteors = 0;
 
         initLevel();
     }
@@ -212,29 +215,10 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                 if (bulletList.get(i).getStatus())
                     canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
             }
-            //meins
 
-            for (int i=0;i<meteors.size();i++) {
-                canvas.drawBitmap(meteors.get(i).getMeteor(), meteors.get(i).meteorX, meteors.get(i).meteorY, null);
-                meteors.get(i).meteorY += meteors.get(i).meteorSpeed;
-                meteors.get(i).meteorX += meteors.get(i).meteorOffset;
-                if (meteors.get(i).meteorY >= dHeight ||
-                meteors.get(i).meteorX > 1000 ||
-                meteors.get(i).meteorX < -200) {
-                    meteors.get(i).resetPosition();
-                }
-            }
+            startMeteorShower(50);
 
-            for (int i=0;i< meteors.size();i++) {
-                if (meteors.get(i).meteorSpaceshipDistance(meteors.get(i), spaceShip) <= meteors.get(i).getMeteorWidth() / 2) {
-                    lives--;
-                    meteors.get(i).resetPosition();
-                }
-            }
 
-            if (lives == 0) {
-                playing = false;
-            }
             canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
 
 
@@ -250,6 +234,39 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
+    }
+    boolean won = false;
+    public void startMeteorShower (int maxMeteors) {
+
+        for (int i = 0; i < meteors.size(); i++) {
+
+            canvas.drawBitmap(meteors.get(i).getMeteor(), meteors.get(i).meteorX, meteors.get(i).meteorY, null);
+            meteors.get(i).meteorY += meteors.get(i).meteorSpeed;
+            meteors.get(i).meteorX += meteors.get(i).meteorOffset;
+            if (meteors.get(i).meteorY >= dHeight ||
+                    meteors.get(i).meteorX > 1000 ||
+                    meteors.get(i).meteorX < -200) {
+                    meteors.get(i).resetPosition();
+                    if(totalMeteors > maxMeteors - meteors.size() -1) {
+                        meteors.remove(i);
+                    }
+
+                    totalMeteors++;
+                }
+            }
+
+
+        for (int i=0;i< meteors.size();i++) {
+            if (meteors.get(i).meteorSpaceshipDistance(meteors.get(i), spaceShip) <= meteors.get(i).getMeteorWidth() / 2) {
+                lives--;
+                meteors.get(i).resetPosition();
+            }
+        }
+
+        if (lives == 0) {
+            playing = false;
+        }
+
     }
 
 public void shoot(){
