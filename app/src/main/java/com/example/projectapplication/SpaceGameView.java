@@ -69,6 +69,8 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
     int totalMeteors;
 
+    boolean meteorIsActive;
+
 
     // This special constructor method runs
     public SpaceGameView(Context context, int x, int y) {
@@ -130,7 +132,9 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             }
 
             // Draw the frame
-            shoot();
+            meteorIsActive = false;
+
+
             draw();
 
             // Calculate the fps this frame
@@ -139,6 +143,12 @@ public class SpaceGameView extends SurfaceView implements Runnable{
             timeThisFrame = System.currentTimeMillis() - startFrameTime;
             if (timeThisFrame >= 1) {
                 fps = 1000 / timeThisFrame;
+            }
+
+            startMeteorShower(50);
+
+            if (!meteorIsActive) {
+                shoot();
             }
 
         }
@@ -216,8 +226,9 @@ public class SpaceGameView extends SurfaceView implements Runnable{
                     canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
             }
 
-            startMeteorShower(50);
-
+            for (int i=0;i<meteors.size();i++) {
+                canvas.drawBitmap(meteors.get(i).getMeteor(), meteors.get(i).meteorX, meteors.get(i).meteorY, null);
+            }
 
             canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
 
@@ -238,9 +249,10 @@ public class SpaceGameView extends SurfaceView implements Runnable{
     boolean won = false;
     public void startMeteorShower (int maxMeteors) {
 
+        meteorIsActive = true;
+
         for (int i = 0; i < meteors.size(); i++) {
 
-            canvas.drawBitmap(meteors.get(i).getMeteor(), meteors.get(i).meteorX, meteors.get(i).meteorY, null);
             meteors.get(i).meteorY += meteors.get(i).meteorSpeed;
             meteors.get(i).meteorX += meteors.get(i).meteorOffset;
             if (meteors.get(i).meteorY >= dHeight ||
@@ -265,6 +277,10 @@ public class SpaceGameView extends SurfaceView implements Runnable{
 
         if (lives == 0) {
             playing = false;
+        }
+
+        if (meteors.isEmpty()) {
+            meteorIsActive = false;
         }
 
     }
