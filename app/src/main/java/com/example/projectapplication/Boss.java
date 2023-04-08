@@ -68,4 +68,10 @@ public class Boss extends Entity{
         paint.setColor(Color.RED);
         canvas.drawRect(getX()- diff,getY()-50, getX()+ getHp(), getY()-20, paint);
     }
+    public void setHp(float hp){
+        this.hp = hp;
+    }
+    public RectF getRect() {
+        return rectF;
+    }
 }

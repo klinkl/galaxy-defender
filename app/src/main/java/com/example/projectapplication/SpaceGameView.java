@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 import android.util.TimeUtils;
 import android.view.MotionEvent;
@@ -122,6 +124,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
 
     private void update() {
+        spaceShip.update(fps);
         for (int i = 0; i < bossBulletList.size(); i++) {
             if (bossBulletList.get(i).getStatus())
                 bossBulletList.get(i).update(fps);
@@ -147,7 +150,37 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         //   if (spaceShip.getY() < 0 + spaceShip.getLength())
         //       spaceShip.setY(screenY);
         int i = 0;
+        while (i < bossBulletList.size()) {
+            if (RectangleCollison(bossBulletList.get(i).getRect(),spaceShip.getRect())){
+                lives--;
+                bossBulletList.remove(i);
+                continue;
+            }
+            if (bossBulletList.get(i).getImpactPointY() < 0) {
+                bossBulletList.remove(i);
+                continue;
+            }
+            if (bossBulletList.get(i).getImpactPointY() > screenY) {
+                bossBulletList.remove(i);
+                continue;
+            }
+            if (bossBulletList.get(i).getImpactPointX() < 0) {
+                bossBulletList.remove(i);
+                continue;
+            }
+            if (bossBulletList.get(i).getImpactPointX() > screenX) {
+                bossBulletList.remove(i);
+                continue;
+            }
+            i++;
+        }
+        i = 0;
         while (i < bulletList.size()) {
+            if (RectangleCollison(bulletList.get(i).getRect(),boss.getRect())){
+                boss.setHp(boss.getHp()-20);
+                bulletList.remove(i);
+                continue;
+            }
             if (bulletList.get(i).getImpactPointY() < 0) {
                 bulletList.remove(i);
                 continue;
@@ -171,7 +204,20 @@ private void boss(){
 
         boss.setActive(true);
 }
-
+private void drawdebug(){
+    for (int i = 0; i < bulletList.size(); i++) {
+        if (bulletList.get(i).getStatus())
+            canvas.drawRect(bulletList.get(i).getRect(), paint);
+    }
+    for (int i = 0; i < bossBulletList.size(); i++) {
+        if (bossBulletList.get(i).getStatus())
+            canvas.drawRect(bossBulletList.get(i).getRect(), paint);
+    }
+    if (boss.isActive()) {
+        canvas.drawRect(boss.getRect(), paint);
+    }
+    canvas.drawRect(spaceShip.getRect(), paint);
+}
     private void draw() {
         // Make sure our drawing surface is valid or we crash
         if (ourHolder.getSurface().isValid()) {
@@ -201,9 +247,9 @@ private void boss(){
                 canvas.drawBitmap(boss.getCurrentBitmap(), boss.getX(), boss.getY(), paint);
                 boss.drawHealthBar(canvas,paint);
             }
+
             canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
-
-
+            //drawdebug();
             // Draw the score and remaining lives
             // Change the brush color
             paint.setColor(Color.argb(255, 249, 129, 0));
@@ -280,5 +326,12 @@ private void boss(){
 
     }
 
-
+public boolean RectangleCollison(RectF rect1, RectF rect2){
+        if (rect1.left < rect2.right
+                && rect1.right > rect2.left &&
+        rect1.top < rect2.bottom && rect1.bottom> rect2.top){
+            return true;
+        }
+        else return false;
+}
 }  // end class
