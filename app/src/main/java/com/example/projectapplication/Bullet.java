@@ -3,6 +3,7 @@ package com.example.projectapplication;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.RectF;
 
 public class Bullet {
@@ -32,25 +33,31 @@ public class Bullet {
 
     private boolean isActive;
 
-    public Bullet(Context context, int screenY, int screenX) {
+    public Bullet(Context context, int screenY, int screenX, int direction) {
 
         //  height = screenY / 20;
+        heading = direction;
         bitmapBullet = BitmapFactory.decodeResource(context.getResources(), R.drawable.bullet1);
+        if (heading ==1){
+            //flip bitmap
+            Matrix matrix = new Matrix();
+            matrix.preRotate(180);
+            bitmapBullet =Bitmap.createBitmap(bitmapBullet, 0,0,bitmapBullet.getWidth(),bitmapBullet.getHeight(),matrix,true);
+        }
         isActive = false;
         this.screenX =screenX;
         this.screenY = screenY;
         this.rect = new RectF();
     }
 
-    public boolean shoot(float startX, float startY, int direction) {
+    public boolean shoot(float startX, float startY) {
         if (!isActive) {
 
             x = startX;
             y = startY;
-            heading = direction;
             isActive = true;
 
-            if ((direction == RIGHT)||(direction==LEFT))
+            if ((heading == RIGHT)||(heading==LEFT))
             {  width = screenX/20;
                 height = 1;}
 

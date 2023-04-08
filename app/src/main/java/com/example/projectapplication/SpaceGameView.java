@@ -57,9 +57,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     long lastTime = 0;
     private Spaceship spaceShip;
     private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+    private ArrayList<Bullet> bossBulletList = new ArrayList<Bullet>();
     private Bitmap bitmapback;
 
-
+    private Boss boss;
     // This special constructor method runs
     public SpaceGameView(Context context, int x, int y) {
 
@@ -86,6 +87,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private void initLevel() {
 
         spaceShip = new Spaceship(context, screenX, screenY);
+        boss = new Boss(context, screenX, screenY);
         //bulletList.add(new Bullet(context, screenY, screenX));
     }
 
@@ -104,7 +106,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             // Draw the frame
             shoot();
             draw();
-
+            boss();
+            boss.shoot(bossBulletList, context);
             // Calculate the fps this frame
             // We can then use the result to
             // time animations and more.
@@ -119,7 +122,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
 
     private void update() {
-
+        for (int i = 0; i < bossBulletList.size(); i++) {
+            if (bossBulletList.get(i).getStatus())
+                bossBulletList.get(i).update(fps);
+        }
         //spaceShip.update(fps);
         for (int i = 0; i < bulletList.size(); i++) {
             if (bulletList.get(i).getStatus())
@@ -161,7 +167,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             i++;
         }
     }
+private void boss(){
 
+        boss.setActive(true);
+}
 
     private void draw() {
         // Make sure our drawing surface is valid or we crash
@@ -184,6 +193,14 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 if (bulletList.get(i).getStatus())
                     canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
             }
+            for (int i = 0; i < bossBulletList.size(); i++) {
+                if (bossBulletList.get(i).getStatus())
+                    canvas.drawBitmap(bossBulletList.get(i).getBitmapBullet(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
+            }
+            if (boss.isActive()) {
+                canvas.drawBitmap(boss.getCurrentBitmap(), boss.getX(), boss.getY(), paint);
+                boss.drawHealthBar(canvas,paint);
+            }
             canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
 
@@ -200,8 +217,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     public void shoot() {
         if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
-            bulletList.add(new Bullet(context, screenY, screenX));
-            bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX(), spaceShip.getY() + spaceShip.getHeight() / 2, 0);
+            bulletList.add(new Bullet(context, screenY, screenX,0));
+            bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX()+( spaceShip.getLength() /6), spaceShip.getY() + spaceShip.getHeight() / 2);
             lastTime = LocalTime.now().toNanoOfDay() / 1000000;
         }
     }
@@ -243,8 +260,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
                 paused = false;
                 //Spaceship follows touch input
-                spaceShip.setX((int) motionEvent.getX());
-                spaceShip.setY((int) motionEvent.getY());
+                spaceShip.setX((int) (motionEvent.getX() - spaceShip.getLength() /2));
+                spaceShip.setY((int) (motionEvent.getY() - spaceShip.getHeight()/2));
 
                 //bulletList.get(0).shoot(spaceShip.getX(),spaceShip.getY()+ spaceShip.getHeight()/2,0);
 
