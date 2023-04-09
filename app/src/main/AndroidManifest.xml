@@ -7,7 +7,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ProjectApplication">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         <activity
             android:name=".MainMenuScene"
             android:exported="true">
