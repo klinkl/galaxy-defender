@@ -6,6 +6,7 @@ import android.graphics.RectF;
 
 public class Spaceship extends Entity{
 
+
     RectF rect;
     private Bitmap bitmapup;
     public final int STOPPED = 0;
@@ -22,7 +23,7 @@ public class Spaceship extends Entity{
         height = screenY/10;
 
         x = screenX / 2;
-        y = screenY / 2;
+        y =  screenY * 9/10;
 
         speed = 350;
         bitmapup = BitmapFactory.decodeResource(context.getResources(), R.drawable.spaceship1);
@@ -82,7 +83,5 @@ public class Spaceship extends Entity{
     public float getHeight(){
         return height;
     }
-
-
 
 }
