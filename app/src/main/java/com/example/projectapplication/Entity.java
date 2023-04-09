@@ -49,6 +49,15 @@ public abstract class Entity {
     protected Bitmap currentBitmap;
     protected float height;
     protected float length;
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
     protected float x;
     protected float y;
     protected int screenX;
