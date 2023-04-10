@@ -49,17 +49,17 @@ public class Boss extends Entity{
         maxhp = hp;
         speed = 10;
     }
-    public void shoot(ArrayList<Bullet> bossBulletList, Context context){
+    public void shoot(ArrayList<Bullet> bossBulletList, Context context, Spaceship spaceship){
         if (isActive()) {
             if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= bulletfrequency) {
-                if (currentStage == STAGE1 || currentStage ==STAGE2) {
+                if (currentStage == STAGE1)  {
                     bossBulletList.add(new Bullet(context, screenY, screenX, 1,
                             (float) (this.getX() + this.getLength() / 2.6),
                             this.getY() + this.getHeight() / 2));
                     bossBulletList.get(bossBulletList.size() - 1).shoot();
 
                 }
-                if (currentStage == STAGE3){
+                if (currentStage == STAGE2){
                     bossBulletList.add(new Bullet(context, screenY, screenX, 1,
                             (float) (this.getX() + this.getLength() / 10),
                             this.getY() + this.getHeight() / 2));
@@ -68,6 +68,13 @@ public class Boss extends Entity{
                             (float) (this.getX() + this.getLength() / 1.5),
                             this.getY() + this.getHeight() / 2));
                     bossBulletList.get(bossBulletList.size() - 1).shoot();
+                }
+                if (currentStage == STAGE3){
+                    bossBulletList.add(new Bullet(context, screenY, screenX, 1,
+                            (float) (this.getX() + this.getLength() / 2.6),
+                            this.getY() + this.getHeight() / 2));
+                    bossBulletList.get(bossBulletList.size() - 1).shoot(spaceship);
+
                 }
                 lastTime = LocalTime.now().toNanoOfDay() / 1000000;
             }

@@ -100,15 +100,18 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             // Update the frame
             if (!paused) {
                 update();
+                shoot();
+                boss();
+                if (boss != null) {
+                    boss.shoot(bossBulletList, context, spaceShip);
+                    boss.move(spaceShip);
+                }
             }
             // Draw the frame
-            shoot();
+
             draw();
-            boss();
-            if (boss != null) {
-                boss.shoot(bossBulletList, context);
-                boss.move(spaceShip);
-            }
+
+
             // Calculate the fps this frame
             // We can then use the result to
             // time animations and more.
