@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/background">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -40,25 +41,44 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
+            android:layout_width="225dp"
             android:layout_height="wrap_content"
             android:background="@drawable/cup20_1"
             android:contentDescription="Email" />
 
         <TextView
+            android:id="@+id/Hello"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Congratulations"
+            android:textColor="#FFBB86FC"
+            android:textSize="40sp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/playerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFBB86FC"
             android:text=""
-            android:textColor="#330022"
-            android:textSize="18sp" />
+            android:textSize="40sp"
+            android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/ScoreText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Score is"
+            android:textColor="#FFBB86FC"
+            android:textSize="40sp"
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/playerScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your Score: "
-            android:textColor="#330022"
-            android:textSize="40sp" />
+            android:text=""
+            android:textColor="#FFBB86FC"
+            android:textSize="45sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </LinearLayout>

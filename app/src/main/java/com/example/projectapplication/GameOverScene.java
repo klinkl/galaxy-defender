@@ -18,6 +18,10 @@ public class GameOverScene extends AppCompatActivity {
         int points = getIntent().getExtras().getInt("Your Score:");
         playerScore = findViewById(R.id.playerScore);
         playerScore.setText("" + points);
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(UserInput.EXTRA_MESSAGE);
+        TextView textView = (TextView) findViewById(R.id.playerName);
+        textView.setText(message);
     }
 
     public void restart(View view) {
