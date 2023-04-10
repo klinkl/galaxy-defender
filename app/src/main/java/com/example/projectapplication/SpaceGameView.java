@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -47,7 +46,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     // This is used to help calculate the fps
     private long timeThisFrame;
-
+    private long lastCollision;
     // The size of the screen in pixels
     private int screenX;
     private int screenY;
@@ -61,8 +60,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     long lastTime = 0;
     private Spaceship spaceShip;
     private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
+    private ArrayList<Bullet> bossBulletList = new ArrayList<Bullet>();
     private Bitmap bitmapback;
 
+    private Boss boss;
 
     // This special constructor method runs
     public SpaceGameView(Context context, int x, int y) {
@@ -90,6 +91,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private void initLevel() {
 
         spaceShip = new Spaceship(context, screenX, screenY);
+        boss = new Boss(context, screenX, screenY);
         //bulletList.add(new Bullet(context, screenY, screenX));
 
         enemies = new ArrayList<>();
@@ -108,7 +110,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     }
 
 
-
     @Override
     public void run() {
         while (playing) {
@@ -118,11 +119,17 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             if (!paused) {
                 shoot();
                 update();
+                if (enemies.isEmpty())
+                boss();
+                if (boss != null) {
+                    boss.shoot(bossBulletList, context, spaceShip);
+                    boss.move(spaceShip);
+                }
             }
-
             // Draw the frame
 
             draw();
+
 
             // Calculate the fps this frame
             // We can then use the result to
@@ -139,11 +146,19 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     private void update() {
 
+        spaceShip.update(fps);
+        for (int i = 0; i < bossBulletList.size(); i++) {
+            if (bossBulletList.get(i).getStatus())
+                bossBulletList.get(i).update(fps);
+        }
 
         for (int i = 0; i < bulletList.size(); i++) {
             if (bulletList.get(i).getStatus())
                 bulletList.get(i).update(fps);
         }
+
+
+
 
         //enemybulletList
         for (int i = 0; i < enemyBullets.size(); i++) {
@@ -155,17 +170,16 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         // Enemy
         boolean hit = false;
         // check screenHit of enemy
-        for (int i =0; i< enemies.size();i++) {
+        for (int i = 0; i < enemies.size(); i++) {
             if (!enemies.get(i).canMoveHorizontally()) {
                 hit = true;
                 break;
             }
         }
+
+
         // change direction if screenHit
         if (hit) {
-            /*if (enemies.get(enemies.size()-1).getY()>= 0.66 * screenY){
-                ydifference=0;
-            } */
             Enemy.reduceBulletFrequency();
             for (Enemy enemy : enemies) {
                 enemy.changeDirection();
@@ -178,14 +192,64 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         }
 
 
+        if (boss != null) {
+            boss.update();
+        }
+
         checkCollisions();
 
     }
 
 
-  /*  private void checkCollisions() {
+    private void checkCollisions() {
+
+        if (boss != null && boss.isActive()) {
+            if (LocalTime.now().toNanoOfDay() / 1000000 - lastCollision >= 1000) {
+                if (RectangleCollison(spaceShip.getActualRect(), boss.getActualRect())) {
+                    lives--;
+                    lastCollision = LocalTime.now().toNanoOfDay() / 1000000;
+                }
+            }
+        }
+
         int i = 0;
+        while (i < bossBulletList.size()) {
+            if (RectangleCollison(bossBulletList.get(i).getActualRect(), spaceShip.getActualRect())) {
+                lives--;
+                bossBulletList.remove(i);
+                continue;
+            }
+            if (bossBulletList.get(i).getImpactPointY() < 0) {
+                bossBulletList.remove(i);
+                continue;
+            }
+            if (bossBulletList.get(i).getImpactPointY() > screenY) {
+                bossBulletList.remove(i);
+                continue;
+            }
+            if (bossBulletList.get(i).getImpactPointX() < 0) {
+                bossBulletList.remove(i);
+                continue;
+            }
+            if (bossBulletList.get(i).getImpactPointX() > screenX) {
+                bossBulletList.remove(i);
+                continue;
+            }
+            i++;
+        }
+        i = 0;
+
+        /*
         while (i < bulletList.size()) {
+            if (boss != null) {
+                if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect()) && boss.isActive()) {
+                    boss.setHp(boss.getHp() - 20);
+                    bulletList.remove(i);
+                    continue;
+                }
+            }
+
+
             if (bulletList.get(i).getImpactPointY() < 0) {
                 bulletList.remove(i);
                 continue;
@@ -202,50 +266,43 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 bulletList.remove(i);
                 continue;
             }
-            for (Enemy enemy: enemies){
-                RectF bullet = bulletList.get(i).getRect();
-                RectF enemyRect = enemy.getRect();
-                if (bullet.intersect(enemyRect)){
-                    enemy.setVisible(false);
-                    bulletList.remove(i);
-                    continue;
-                }
-            }
-            i++;
         }
-    } */
 
-
-    public void checkCollisions() {
-        System.out.println(bulletList.size());
-        for (int i = 0; i < bulletList.size(); i++) {
-            //Bullet bullet = bulletList.get(i);
-            if (bulletList.get(i).getStatus()) {
-                //RectF bulletRect = bulletList.get(i).getActualRect();
-                for (int j = 0; j < enemies.size(); j++) {
-                    //Enemy enemy = enemies.get(j);
-                    if (enemies.get(j).getStatus()) {
-                        RectF enemyRect = enemies.get(j).getActualRect();
-                        if (RectF.intersects(bulletList.get(i).getActualRect(), enemyRect)) {
-                            // Bullet and enemy have collided
-                            bulletList.get(i).setInactive();
-                            enemies.get(j).setInactive();
-                            bulletList.remove(bulletList.get(i));
-                            enemies.remove(enemies.get(j));
-                            score += 10;
-                            break;
+        i++; */
+        i = 0;
+        while ( i < bulletList.size()) {
+               Bullet bullet = bulletList.get(i);
+                if (bulletList.get(i).getStatus()) {
+                    RectF bulletRect = bulletList.get(i).getActualRect();
+                    int j = 0;
+                    while (j < enemies.size()) {
+                        Enemy enemy = enemies.get(j);
+                        if (enemy.getStatus()) {
+                            RectF enemyRect = enemy.getActualRect();
+                            if (RectF.intersects(bullet.getActualRect(), enemyRect)) {
+                                // Bullet and enemy have collided
+                                bulletList.get(i).setInactive();
+                                enemies.get(j).setInactive();
+                                bulletList.remove(bullet);
+                                enemies.remove(enemy);
+                                score += 10;
+                                continue;
+                            }
                         }
+                        j++;
+                    }
+                    // Check if bullet has gone out of the screen
+                    if (bullet.getActualRect().bottom < 0) {
+                        bullet.setInactive();
+                        bulletList.remove(bullet);
                     }
                 }
-                // Check if bullet has gone out of the screen
-                if (bulletList.get(i).getActualRect().bottom < 0) {
-                    bulletList.get(i).setInactive();
-                    bulletList.remove(bulletList.get(i));
-                }
+                i++;
             }
-        }
+
+        i =0;
         // Check for enemy bullet collisions with spaceship
-        for (int i = 0; i < enemyBullets.size(); i++) {
+        while( i < enemyBullets.size()) {
             Bullet enemyBullet = enemyBullets.get(i);
             if (enemyBullet.getStatus()) {
                 RectF enemyBulletRect = enemyBullet.getActualRect();
@@ -266,38 +323,44 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     enemyBullets.remove(enemyBullet);
                 }
             }
+            i++;
         }
     }
+private void boss(){
+        if (boss != null) {
+            boss.setActive(true);
+            if (boss.getHp() < 0)
+                boss = null;
+        }
+}
+private void drawdebug() {
+    paint.setColor(Color.WHITE);
+    for (int i = 0; i < bulletList.size(); i++) {
+        if (bulletList.get(i).getStatus())
+            canvas.drawRect(bulletList.get(i).getActualRect(), paint);
+        canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
 
+    }
+    for (int i = 0; i < bossBulletList.size(); i++) {
+        if (bossBulletList.get(i).getStatus())
+            canvas.drawRect(bossBulletList.get(i).getActualRect(), paint);
+        canvas.drawBitmap(bossBulletList.get(i).getBitmapBullet(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
+    }
+    if (boss != null) {
+        canvas.drawRect(boss.getActualRect(), paint);
+        canvas.drawBitmap(boss.getCurrentBitmap(), boss.getX(), boss.getY(), paint);
+    }
+    canvas.drawRect(spaceShip.getActualRect(), paint);
+    canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
-
+}
     public void gameOver(){
         System.out.print("Game Over");
     }
 
-/*
-    private void drawdebug(){
-        paint.setColor(Color.WHITE);
-        for (int i = 0; i < bulletList.size(); i++) {
-            if (bulletList.get(i).getStatus())
-                canvas.drawRect(bulletList.get(i).getActualRect(), paint);
-            canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
 
-        }
-        for (int i = 0; i < enemyBullets.size(); i++) {
-            if (enemyBullets.get(i).getStatus())
-                canvas.drawRect(enemyBullets.get(i).getActualRect(), paint);
-            canvas.drawBitmap(enemyBullets.get(i).getBitmapBullet(), enemyBullets.get(i).getRect().left, enemyBullets.get(i).getRect().top, paint);
-        }
-        for (int i = 0; i < enemies.size(); i++) {
-            if (enemies.get(i).getStatus())
-                canvas.drawRect(enemies.get(i).getActualRect(), paint);
-            canvas.drawBitmap(enemies.get(i).getCurrentBitmap(), enemies.get(i).getRect().left, enemies.get(i).getRect().top, paint);
-        }
 
-    }
 
- */
     private void draw() {
         // Make sure our drawing surface is valid or we crash
         if (ourHolder.getSurface().isValid()) {
@@ -314,9 +377,9 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             bitmapback = Bitmap.createScaledBitmap(bitmapback, (int) (screenX), (int) (screenY), false);
 
             //  canvas.drawBitmap(background.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
-
             //  draw the defender bullets
             canvas.drawBitmap(bitmapback, 0,  0, paint);
+
             for (int i = 0; i < bulletList.size(); i++) {
                 if (bulletList.get(i).getStatus())
                     canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
@@ -334,6 +397,16 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     canvas.drawBitmap(enemy.getCurrentBitmap(), enemy.getX(), enemy.getY(), paint);
                 }
             }
+            for (int i = 0; i < bossBulletList.size(); i++) {
+                if (bossBulletList.get(i).getStatus())
+                    canvas.drawBitmap(bossBulletList.get(i).getBitmapBullet(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
+            }
+            if (boss != null && boss.isActive()) {
+                canvas.drawBitmap(boss.getCurrentBitmap(), boss.getX(), boss.getY(), paint);
+                boss.drawHealthBar(canvas,paint);
+            }
+
+            canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
             //drawdebug();
             // Draw the score and remaining lives
@@ -349,8 +422,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     public void shoot() {
         if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
-            bulletList.add(new Bullet(context, screenY, screenX,0));
-            bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX()+( spaceShip.getLength() /6), spaceShip.getY() + spaceShip.getHeight() / 2);
+            bulletList.add(new Bullet(context, screenY, screenX,0,spaceShip.getX()+( spaceShip.getLength() /6)
+                    , spaceShip.getY() + spaceShip.getHeight() / 2));
+            bulletList.get(bulletList.size() - 1).shoot();
+
             lastTime = LocalTime.now().toNanoOfDay() / 1000000;
         }
     }
@@ -382,34 +457,34 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     // So we can override this method and detect screen touches.
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-
             // Player has touched the screen
-
             case MotionEvent.ACTION_MOVE:
-
-
                 paused = false;
                 //Spaceship follows touch input
-                spaceShip.setX((int) motionEvent.getX());
-                //spaceShip.setY((int) motionEvent.getY());
 
-                //bulletList.get(0).shoot(spaceShip.getX(),spaceShip.getY()+ spaceShip.getHeight()/2,0);
+                spaceShip.setX((int)
+                        (motionEvent.getX() - spaceShip.getLength() /2));
+                spaceShip.setY((int)
+                        (motionEvent.getY() - spaceShip.getHeight()/2));
 
                 break;
 
             // Player has removed finger from screen
             case MotionEvent.ACTION_UP:
 
-                //   if(motionEvent.getY() > screenY - screenY / 10) {
-                //spaceShip.setMovementState(spaceShip.STOPPED);
-                //   }
                 break;
         }
         return true;
 
     }
 
-
-}  // end class
+public boolean RectangleCollison(RectF rect1, RectF rect2){
+        if (rect1.left < rect2.right
+                && rect1.right > rect2.left &&
+        rect1.top < rect2.bottom && rect1.bottom> rect2.top){
+            return true;
+        }
+        else return false;
+}
+        }  // end class

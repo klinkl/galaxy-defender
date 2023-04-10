@@ -19,14 +19,14 @@ public class Spaceship extends Entity{
 
         rect = new RectF();
 
-        length = screenX/6;
-        height = screenY/10;
 
         x = screenX / 2;
         y =  screenY * 9/10;
 
         speed = 350;
         bitmapup = BitmapFactory.decodeResource(context.getResources(), R.drawable.spaceship1);
+        length = screenX/6;
+        height = screenX/6;
 
         // stretch the bitmap to a size appropriate for the screen resolution
         bitmapup = Bitmap.createScaledBitmap(bitmapup,
@@ -59,8 +59,6 @@ public class Spaceship extends Entity{
     public RectF getRect(){
         return rect;
     }
-
-
 
     public RectF getActualRect(){
         //0.43 is the difference between actual size and png size

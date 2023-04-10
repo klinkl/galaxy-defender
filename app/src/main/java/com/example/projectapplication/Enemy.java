@@ -180,8 +180,8 @@ protected float x;
                 // Create a new bullet object at the enemy's position
                 float bulletX = x;
                 float bulletY = y;
-                bulletlist.add(new Bullet(context,screenX, screenY, 1));
-                bulletlist.get( bulletlist.size()-1).shoot(bulletX, bulletY);
+                bulletlist.add(new Bullet(context,screenX, screenY, 1,bulletX, bulletY));
+                bulletlist.get( bulletlist.size()-1).shoot();
                 lastBulletTime = currentTime;
             }
         }

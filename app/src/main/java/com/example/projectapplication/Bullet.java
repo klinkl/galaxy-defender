@@ -1,10 +1,14 @@
 package com.example.projectapplication;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
+import android.util.Pair;
 
 public class Bullet {
 
@@ -82,7 +86,11 @@ public class Bullet {
 
     private boolean isActive;
 
-    public Bullet(Context context, int screenY, int screenX, int direction) {
+    private Pair<Float, Float> vector;
+    private boolean pathFinding;
+    private Matrix rotMatrix = new Matrix();
+    public Bullet(Context context, int screenY, int screenX, int direction, float startX, float startY) {
+
 
         //  height = screenY / 20;
         heading = direction;
@@ -96,19 +104,46 @@ public class Bullet {
         isActive = false;
         this.screenX =screenX;
         this.screenY = screenY;
-        this.rect = new RectF();
+        x = startX;
+        y = startY;
+        this.rect = new RectF(x,y,x+bitmapBullet.getWidth(),y+bitmapBullet.getHeight());
+
     }
 
-    public boolean shoot(float startX, float startY) {
+
+
+    public boolean shoot() {
         if (!isActive) {
 
-            x = startX;
-            y = startY;
 
+            isActive = true;
 
             width = getBitmapBullet().getWidth();
             height = getBitmapBullet().getHeight();
+
+            return true;
+        }
+
+        // Bullet already active
+        return false;
+    }
+    public boolean shoot(Spaceship spaceship) {
+        if (!isActive) {
+
+
             isActive = true;
+
+            width = getBitmapBullet().getWidth();
+            height = getBitmapBullet().getHeight();
+            float diffx = spaceship.getX()+spaceship.getLength()/2-(this.getX()+this.getWidth()/2);
+            float diffy = spaceship.getY()+ spaceship.getHeight()/2-(this.getY()+this.getHeight()/2);
+            float magnitude = (float)sqrt(pow(diffx,2) + pow(diffy,2));
+            vector = new Pair<>((diffx *(1/magnitude)), (diffy*(1/magnitude)));
+            pathFinding = true;
+            //Matrix rotation needed
+            double angle = Math.toDegrees(Math.atan2(vector.second, vector.first));
+            rotMatrix.preRotate((float)angle-90);
+            bitmapBullet =Bitmap.createBitmap(bitmapBullet, 0,0,bitmapBullet.getWidth(),bitmapBullet.getHeight(),rotMatrix,true);
             return true;
         }
 
@@ -117,9 +152,13 @@ public class Bullet {
     }
 
     public void update(long fps) {
+        if (pathFinding == true){
 
+            x+= vector.first * speed /fps;
+            y+= vector.second * speed/fps;
+        }
         // Just move up or down
-        if(heading == UP){
+            else if(heading == UP){
             y = y - speed / fps;
         }else if (heading == DOWN){
             y = y + speed / fps;
@@ -155,9 +194,11 @@ public class Bullet {
     public void setInactive(){
         isActive = false;
     }
-    public RectF getCenter(){
+
+public RectF getCenter(){
         return new RectF(x+getBitmapBullet().getWidth()/2,y+getBitmapBullet().getHeight()/2,0,0);
-    }
+}
+
     public float getImpactPointY() {
         if (heading == DOWN) {
             return y + height;
