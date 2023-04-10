@@ -22,7 +22,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private int numEnemies = 0;
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private ArrayList<Bullet> enemyBullets = new ArrayList<>();
-    int t =0;
 
     private Context context;
 
@@ -98,7 +97,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         int numColumns = screenX / (2 * screenX / 10);
 
         // Create the enemies and add them to the list
-        for (int row = 0; row < 5; row++) {
+        for (int row = 0; row < 6; row++) {
             for (int column = 0; column < numColumns; column++) {
                 Enemy enemy = new Enemy(getContext(), row, column, screenX, screenY);
                 enemies.add(enemy);
@@ -117,11 +116,12 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             long startFrameTime = System.currentTimeMillis();
             // Update the frame
             if (!paused) {
+                shoot();
                 update();
             }
 
             // Draw the frame
-            shoot();
+
             draw();
 
             // Calculate the fps this frame
@@ -217,32 +217,30 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
 
     public void checkCollisions() {
-        // Check for spaceship bullet collisions with enemies
-
-        // System.out.println("Enemies: " +enemyBullets.size());
+        System.out.println(bulletList.size());
         for (int i = 0; i < bulletList.size(); i++) {
-            Bullet bullet = bulletList.get(i);
-            if (bullet.getStatus()) {
-                RectF bulletRect = bullet.getActualRect();
+            //Bullet bullet = bulletList.get(i);
+            if (bulletList.get(i).getStatus()) {
+                //RectF bulletRect = bulletList.get(i).getActualRect();
                 for (int j = 0; j < enemies.size(); j++) {
-                    Enemy enemy = enemies.get(j);
-                    if (enemy.getStatus()) {
-                        RectF enemyRect = enemy.getActualRect();
-                        if (RectF.intersects(bulletRect, enemyRect)) {
+                    //Enemy enemy = enemies.get(j);
+                    if (enemies.get(j).getStatus()) {
+                        RectF enemyRect = enemies.get(j).getActualRect();
+                        if (RectF.intersects(bulletList.get(i).getActualRect(), enemyRect)) {
                             // Bullet and enemy have collided
-                            bullet.setInactive();
-                            enemy.setInactive();
-                            bulletList.remove(bullet);
-                            enemies.remove(enemy);
+                            bulletList.get(i).setInactive();
+                            enemies.get(j).setInactive();
+                            bulletList.remove(bulletList.get(i));
+                            enemies.remove(enemies.get(j));
                             score += 10;
                             break;
                         }
                     }
                 }
                 // Check if bullet has gone out of the screen
-                if (bulletRect.bottom < 0) {
-                    bullet.setInactive();
-                    bulletList.remove(bullet);
+                if (bulletList.get(i).getActualRect().bottom < 0) {
+                    bulletList.get(i).setInactive();
+                    bulletList.remove(bulletList.get(i));
                 }
             }
         }

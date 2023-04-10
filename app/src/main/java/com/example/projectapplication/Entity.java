@@ -4,6 +4,46 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 
 public abstract class Entity {
+    public void setHp(float hp) {
+        this.hp = hp;
+    }
+
+    public void setCurrentBitmap(Bitmap currentBitmap) {
+        this.currentBitmap = currentBitmap;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
+    public void setLength(float length) {
+        this.length = length;
+    }
+
+    public void setScreenX(int screenX) {
+        this.screenX = screenX;
+    }
+
+    public void setScreenY(int screenY) {
+        this.screenY = screenY;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public void setMovingState(MovingState movingState) {
+        this.movingState = movingState;
+    }
+
+    public RectF getRectF() {
+        return rectF;
+    }
+
+    public void setRectF(RectF rectF) {
+        this.rectF = rectF;
+    }
+
     protected float hp;
 
     public float getHp() {

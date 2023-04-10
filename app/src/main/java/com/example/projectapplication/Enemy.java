@@ -135,7 +135,8 @@ protected float x;
         }
         else isMovingRight = true;
 
-        moveDown(50);
+        moveDown(getHeight() / 5);
+        setSpeed((float) (getSpeed() * 1.01));
     }
 
     public boolean canMoveHorizontally() {
