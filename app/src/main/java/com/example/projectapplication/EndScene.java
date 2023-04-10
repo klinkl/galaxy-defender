@@ -8,16 +8,16 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class GameOverScene extends AppCompatActivity {
+public class EndScene extends AppCompatActivity {
     TextView playerScore;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.game_over);
-        int points = getIntent().getExtras().getInt("Your Score:");
+        setContentView(R.layout.end_scene);
+        int scores = getIntent().getExtras().getInt("Your Score is");
         playerScore = findViewById(R.id.playerScore);
-        playerScore.setText("" + points);
+        playerScore.setText("" + scores);
         Intent intent = getIntent();
         String message = intent.getStringExtra(UserInput.EXTRA_MESSAGE);
         TextView textView = (TextView) findViewById(R.id.playerName);
@@ -25,7 +25,7 @@ public class GameOverScene extends AppCompatActivity {
     }
 
     public void restart(View view) {
-        Intent intent = new Intent(GameOverScene.this, MainMenuScene.class);
+        Intent intent = new Intent(EndScene.this, MainMenuScene.class);
         startActivity(intent);
         finish();
     }
