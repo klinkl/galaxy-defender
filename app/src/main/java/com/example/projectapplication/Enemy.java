@@ -136,7 +136,6 @@ protected float x;
         else isMovingRight = true;
 
         moveDown(50);
-        setSpeed(getSpeed() );
     }
 
     public boolean canMoveHorizontally() {
@@ -180,15 +179,32 @@ protected float x;
                 // Create a new bullet object at the enemy's position
                 float bulletX = x;
                 float bulletY = y;
-                bulletlist.add(new Bullet(context,screenX, screenY));
-                bulletlist.get( bulletlist.size()-1).shoot(bulletX, bulletY,1);
+                bulletlist.add(new Bullet(context,screenX, screenY, 1));
+                bulletlist.get( bulletlist.size()-1).shoot(bulletX, bulletY);
                 lastBulletTime = currentTime;
             }
         }
 
     }
 
+    public RectF getActualRect(){
+        int diffx= (int)(0.2 * getLength());
+        int diffy =(int)(0.32 * getHeight());
+        return new RectF(getX()+ diffx/2, getY()+ diffy/2,
+                getX()+getLength()-diffx/2, getY()+getHeight()-diffy/2);
+    }
+
     public boolean isVisible() {
         return isVisible;
     }
+
+    public void setInactive() {
+        setVisible(false);
+    }
+
+    public boolean getStatus() {
+        return isVisible;
+    }
+
+
 }
