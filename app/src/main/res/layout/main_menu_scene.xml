@@ -4,26 +4,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:background="@drawable/background">
+    android:background="@drawable/background"
+    android:padding="16dp">
+
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="91dp"
+        android:orientation="horizontal">
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/playii"
-            android:contentDescription="Email"
-            android:onClick="startGame" />
+            android:layout_width="86dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/exite"
+            android:contentDescription="exit"
+            android:onClick="exitGame" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="80dp"
-        android:layout_height="57dp"
-        android:layout_marginTop="10dp"
-        android:onClick="startGame"
-        android:text="Play"
-        android:textColor="#330022"
-        android:textSize="20sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/wellcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wellcome"
+            android:textColor="#FFBB86FC"
+            android:textSize="55sp"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#330022"
+            android:textSize="60sp" />
+        <ImageButton
+            android:layout_width="262dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/play"
+            android:contentDescription="Email"
+            android:gravity="center"
+            android:onClick="startGame" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#330022"
+            android:textSize="60sp" />
+    </LinearLayout>
+
 
 </LinearLayout>

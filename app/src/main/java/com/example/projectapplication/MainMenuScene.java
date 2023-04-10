@@ -18,4 +18,7 @@ public class MainMenuScene extends AppCompatActivity {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
+    public void exitGame(View view) {
+        finish();
+    }
 }
