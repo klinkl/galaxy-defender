@@ -3,6 +3,7 @@ package com.example.projectapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,10 @@ public class MainMenuScene extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_menu_scene);
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(UserInput.EXTRA_MESSAGE);
+        TextView textView = (TextView) findViewById(R.id.wellcome);
+        textView.setText(message);
     }
 
     public void startGame(View view) {
