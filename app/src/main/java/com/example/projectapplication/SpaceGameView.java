@@ -184,7 +184,9 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             for (Enemy enemy : enemies) {
                 enemy.changeDirection();
             }
+            hit = false;
         }
+
         // update enemy movement
         for (Enemy enemy : enemies) {
             enemy.dropBullet(enemyBullets, context, spaceShip);
@@ -271,6 +273,13 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         i++; */
         i = 0;
         while ( i < bulletList.size()) {
+            if (boss != null) {
+                if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect()) && boss.isActive()) {
+                    boss.setHp(boss.getHp() - 20);
+                    bulletList.remove(i);
+                    continue;
+                }
+            }
                Bullet bullet = bulletList.get(i);
                 if (bulletList.get(i).getStatus()) {
                     RectF bulletRect = bulletList.get(i).getActualRect();
@@ -281,7 +290,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                             RectF enemyRect = enemy.getActualRect();
                             if (RectF.intersects(bullet.getActualRect(), enemyRect)) {
                                 // Bullet and enemy have collided
-                                bulletList.get(i).setInactive();
+                                bullet.setInactive();
                                 enemies.get(j).setInactive();
                                 bulletList.remove(bullet);
                                 enemies.remove(enemy);
@@ -295,6 +304,19 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     if (bullet.getActualRect().bottom < 0) {
                         bullet.setInactive();
                         bulletList.remove(bullet);
+                        continue;
+                    }
+                    if (bullet.getImpactPointY() < 0) {
+                        bulletList.remove(bullet);
+                        continue;
+                    }
+                    if (bullet.getImpactPointX() > screenX) {
+                        bulletList.remove(bullet);
+                        continue;
+                    }
+                    if (bullet.getImpactPointX() < 0) {
+                        bulletList.remove(bullet);
+                        continue;
                     }
                 }
                 i++;

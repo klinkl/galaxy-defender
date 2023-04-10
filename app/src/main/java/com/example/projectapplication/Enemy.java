@@ -140,7 +140,7 @@ protected float x;
     }
 
     public boolean canMoveHorizontally() {
-        if (x + length >= screenX || x < 0 ) {
+        if (x + length > screenX || x < 0 ) {
             return false;
         } else return true;
 
