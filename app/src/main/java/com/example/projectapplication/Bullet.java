@@ -82,7 +82,7 @@ public class Bullet {
 
     private boolean isActive;
 
-    public Bullet(Context context, int screenY, int screenX, int direction) {
+    public Bullet(Context context, int screenY, int screenX, int direction, float startX, float startY) {
 
         //  height = screenY / 20;
         heading = direction;
@@ -96,14 +96,16 @@ public class Bullet {
         isActive = false;
         this.screenX =screenX;
         this.screenY = screenY;
-        this.rect = new RectF();
+        x = startX;
+        y = startY;
+        this.rect = new RectF(x,y,x+bitmapBullet.getWidth(),y+bitmapBullet.getHeight());
+
     }
 
-    public boolean shoot(float startX, float startY) {
+    public boolean shoot() {
         if (!isActive) {
 
-            x = startX;
-            y = startY;
+
             isActive = true;
 
             width = getBitmapBullet().getWidth();

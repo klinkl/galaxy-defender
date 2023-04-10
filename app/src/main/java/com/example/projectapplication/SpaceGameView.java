@@ -5,17 +5,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
-import android.util.TimeUtils;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -45,7 +42,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     // This is used to help calculate the fps
     private long timeThisFrame;
-
+    private long lastCollision;
     // The size of the screen in pixels
     private int screenX;
     private int screenY;
@@ -104,7 +101,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             if (!paused) {
                 update();
             }
-
             // Draw the frame
             shoot();
             draw();
@@ -146,6 +142,15 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
 
     private void checkCollisions() {
+        if (boss != null && boss.isActive()) {
+            if (LocalTime.now().toNanoOfDay() / 1000000 - lastCollision >= 1000) {
+                if (RectangleCollison(spaceShip.getActualRect(), boss.getActualRect())) {
+                    lives--;
+                    lastCollision = LocalTime.now().toNanoOfDay() / 1000000;
+                }
+            }
+        }
+
         int i = 0;
         while (i < bossBulletList.size()) {
             if (RectangleCollison(bossBulletList.get(i).getActualRect(),spaceShip.getActualRect())){
@@ -175,7 +180,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
         while (i < bulletList.size()) {
             if (boss != null) {
-                if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect())) {
+                if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect()) && boss.isActive()) {
                     boss.setHp(boss.getHp() - 20);
                     bulletList.remove(i);
                     continue;
@@ -260,7 +265,7 @@ private void drawdebug(){
             }
 
             canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
-            drawdebug();
+            //drawdebug();
             // Draw the score and remaining lives
             // Change the brush color
             paint.setColor(Color.argb(255, 249, 129, 0));
@@ -274,8 +279,9 @@ private void drawdebug(){
 
     public void shoot() {
         if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
-            bulletList.add(new Bullet(context, screenY, screenX,0));
-            bulletList.get(bulletList.size() - 1).shoot(spaceShip.getX()+( spaceShip.getLength() /6), spaceShip.getY() + spaceShip.getHeight() / 2);
+            bulletList.add(new Bullet(context, screenY, screenX,0,spaceShip.getX()+( spaceShip.getLength() /6)
+                    , spaceShip.getY() + spaceShip.getHeight() / 2));
+            bulletList.get(bulletList.size() - 1).shoot();
             lastTime = LocalTime.now().toNanoOfDay() / 1000000;
         }
     }
@@ -307,30 +313,21 @@ private void drawdebug(){
     // So we can override this method and detect screen touches.
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-
             // Player has touched the screen
-
             case MotionEvent.ACTION_MOVE:
-
-
                 paused = false;
                 //Spaceship follows touch input
-                spaceShip.setX((int) (motionEvent.getX() - spaceShip.getLength() /2));
-                spaceShip.setY((int) (motionEvent.getY() - spaceShip.getHeight()/2));
-
-                //bulletList.get(0).shoot(spaceShip.getX(),spaceShip.getY()+ spaceShip.getHeight()/2,0);
-
+                spaceShip.setX((int)
+                        (motionEvent.getX() - spaceShip.getLength() /2));
+                spaceShip.setY((int)
+                        (motionEvent.getY() - spaceShip.getHeight()/2));
 
                 break;
 
             // Player has removed finger from screen
             case MotionEvent.ACTION_UP:
 
-                //   if(motionEvent.getY() > screenY - screenY / 10) {
-                //spaceShip.setMovementState(spaceShip.STOPPED);
-                //   }
                 break;
         }
         return true;
