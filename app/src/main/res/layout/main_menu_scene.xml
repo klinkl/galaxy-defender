@@ -21,7 +21,7 @@
         <ImageButton
             android:layout_width="86dp"
             android:layout_height="match_parent"
-            android:background="@drawable/exite"
+            android:background="@drawable/exit"
             android:contentDescription="exit"
             android:onClick="exitGame" />
     </LinearLayout>
