@@ -17,7 +17,7 @@ public class MainMenuScene extends AppCompatActivity {
         String message = intent.getStringExtra(UserInput.EXTRA_MESSAGE);
         TextView textView = (TextView) findViewById(R.id.wellcome);
         textView.setText(message);
-        System.out.println("we wellcomed "+message);
+        System.out.println("we welcomed "+message);
     }
 
     public void startGame(View view) {

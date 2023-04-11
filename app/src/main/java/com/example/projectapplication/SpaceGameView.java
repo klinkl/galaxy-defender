@@ -60,7 +60,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     public int score = 0;
 
     // Lives
-    private int lives = 1;
+    private int lives = 1000;
 
     long lastTime = 0;
     private Spaceship spaceShip;
@@ -255,9 +255,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     if (lives == 0) {
                         // Game over
                         gameOver();
-
-                        pause();
-
                     }
                     lastCollision = LocalTime.now().toNanoOfDay() / 1000000;
                 }
@@ -271,8 +268,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 if (lives == 0) {
                     // Game over
                     gameOver();
-                    pause();
-
                 }
                 bossBulletList.remove(i);
                 continue;
@@ -392,12 +387,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     lives--;
                     if (lives == 0) {
                         // Game over
-                        paused = true;
-                        handler = null;
-                        Intent intent = new Intent(context, GameOverScene.class);
-                        intent.putExtra("points", score);
-                        context.startActivity(intent);
-                        ((Activity) context).finish();
+                        gameOver();
                     }
                 }
                 // Check if enemy bullet has gone out of the screen
@@ -414,6 +404,7 @@ private void boss(){
             boss.setActive(true);
             if (boss.getHp() < 0)
                 boss = null;
+            winGame();
         }
 }
 private void drawdebug() {
@@ -438,17 +429,27 @@ private void drawdebug() {
 
 }
     public void gameOver(){
-        System.out.print("Game Over");
+
         paused = true;
         handler = null;
         Intent intent = new Intent(context, GameOverScene.class);
-        intent.putExtra("points", score);
+        intent.putExtra("score", score);
         context.startActivity(intent);
         ((Activity) context).finish();
+        System.out.print("Game Over");
     }
 
 
+    public void winGame(){
 
+        paused = true;
+        handler = null;
+        Intent intent = new Intent(context, WinnerScene.class);
+        intent.putExtra("score", score);
+        context.startActivity(intent);
+        ((Activity) context).finish();
+        System.out.print("Winner!");
+    }
 
     private void draw() {
         // Make sure our drawing surface is valid or we crash
@@ -462,7 +463,7 @@ private void drawdebug() {
             // Choose the brush color for drawing
             paint.setColor(Color.argb(255, 255, 255, 255));
 
-            bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);
+            bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.sprite);
             bitmapback = Bitmap.createScaledBitmap(bitmapback, (int) (screenX), (int) (screenY), false);
 
             //  canvas.drawBitmap(background.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
@@ -546,7 +547,8 @@ private void drawdebug() {
         }
 
         if (lives == 0) {
-            playing = false;
+            //playing = false;
+            gameOver();
         }
 
         if (meteors.isEmpty()) {

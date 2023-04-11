@@ -9,11 +9,11 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="91dp"
+        android:layout_height="57dp"
         android:orientation="horizontal">
 
         <ImageButton
-            android:layout_width="98dp"
+            android:layout_width="86dp"
             android:layout_height="wrap_content"
             android:background="@drawable/arrowback"
             android:contentDescription="restart"
@@ -25,19 +25,21 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:layout_width="86dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/exit"
             android:contentDescription="exit"
             android:onClick="exit" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:layout_marginBottom="50dp"
         android:gravity="center"
-        android:orientation="vertical"
-        android:layout_marginBottom="64dp">
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/Hello1"
             android:layout_width="wrap_content"
@@ -45,30 +47,24 @@
             android:text=""
             android:textColor="#FFBB86FC"
             android:textSize="30sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="265dp"
-            android:layout_height="317dp"
+            android:layout_height="253dp"
             android:background="@drawable/gameover"
             android:contentDescription="Email" />
-
-        <TextView
-            android:id="@+id/playerName1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFBB86FC"
-            android:textSize="40sp"
-            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/ScoreText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your Score:"
+            android:text="your Score:"
             android:textColor="#FFBB86FC"
             android:textSize="40sp"
             android:textStyle="bold" />
+
         <TextView
             android:id="@+id/playerScore"
             android:layout_width="wrap_content"

@@ -15,17 +15,18 @@ public class GameOverScene  extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_over_scene);
-        int scores = getIntent().getExtras().getInt("Your Score:");
+        /*Intent intent2 = getIntent();
+        String message = intent2.getStringExtra(UserInput.EXTRA_MESSAGE);
+        TextView textView = (TextView) findViewById(R.id.playerName1);
+        textView.setText(message);*/
+
+        int score = getIntent().getExtras().getInt("score");
         playerScore = findViewById(R.id.playerScore);
-        playerScore.setText("" + scores);
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(UserInput.EXTRA_MESSAGE);
-        TextView textView = (TextView) findViewById(R.id.playerScore);
-        textView.setText(message);
+        playerScore.setText("" + score);
     }
 
     public void restart(View view) {
-        Intent intent = new Intent(GameOverScene.this, MainMenuScene.class);
+        Intent intent = new Intent(GameOverScene.this, UserInput.class);
         startActivity(intent);
         finish();
     }
