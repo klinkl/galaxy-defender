@@ -1,12 +1,15 @@
 package com.example.projectapplication;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -65,6 +68,15 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     private Boss boss;
 
+//Finns
+    private ArrayList<Meteor> meteors;
+
+    static int dWidth, dHeight;
+
+    int totalMeteors;
+
+    boolean meteorIsActive;
+
     // This special constructor method runs
     public SpaceGameView(Context context, int x, int y) {
 
@@ -83,6 +95,19 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         screenX = x;
         screenY = y;
 
+        meteors = new ArrayList<>();
+
+
+        //Finns
+        Display display =  ((Activity) getContext()).getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        dWidth = point.x;
+        dHeight = point.y;
+
+        totalMeteors = 0;
+
+        meteorIsActive = false;
 
         initLevel();
     }
@@ -93,17 +118,23 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         spaceShip = new Spaceship(context, screenX, screenY);
         boss = new Boss(context, screenX, screenY);
         //bulletList.add(new Bullet(context, screenY, screenX));
+        //finns
+        for (int i=0;i<5;i++) {
+            Meteor meteor = new Meteor(context);
+            meteors.add(meteor);
+        }
 
         enemies = new ArrayList<>();
         // screenX / length of two enemies
         int numColumns = screenX / (2 * screenX / 10);
 
         // Create the enemies and add them to the list
-        for (int row = 0; row < 6; row++) {
+        for (int row = 0; row < 1; row++) {
             for (int column = 0; column < numColumns; column++) {
                 Enemy enemy = new Enemy(getContext(), row, column, screenX, screenY);
                 enemies.add(enemy);
             }
+
         }
 
 
@@ -117,10 +148,18 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             long startFrameTime = System.currentTimeMillis();
             // Update the frame
             if (!paused) {
-                shoot();
+                if (!meteorIsActive) {
+                    shoot();
+                }
                 update();
-              if (enemies.isEmpty())
-                boss();
+              if (enemies.isEmpty()) {
+                  startMeteorShower(50);
+              }
+
+              if (meteors.isEmpty()) {
+                  boss();
+              }
+
                 if (boss != null) {
                     boss.shoot(bossBulletList, context, spaceShip);
                     boss.move(spaceShip);
@@ -424,6 +463,13 @@ private void drawdebug() {
                 if (enemyBullets.get(i).getStatus())
                     canvas.drawBitmap(enemyBullets.get(i).getBitmapBullet(), enemyBullets.get(i).getRect().left, enemyBullets.get(i).getRect().top, paint);
             }
+            if (!meteors.isEmpty() && meteorIsActive == true) {
+                for (int i=0;i<meteors.size();i++) {
+                    canvas.drawBitmap(meteors.get(i).getMeteor(), meteors.get(i).meteorX, meteors.get(i).meteorY, null);
+                }
+            }
+
+
             canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
             // draw all enemies
@@ -453,6 +499,45 @@ private void drawdebug() {
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
+    }
+
+    public void startMeteorShower (int maxMeteors) {
+
+        meteorIsActive = true;
+
+        for (int i = 0; i < meteors.size(); i++) {
+
+            meteors.get(i).meteorY += meteors.get(i).meteorSpeed;
+            meteors.get(i).meteorX += meteors.get(i).meteorOffset;
+            if (meteors.get(i).meteorY >= dHeight ||
+                    meteors.get(i).meteorX > 1000 ||
+                    meteors.get(i).meteorX < -200) {
+                meteors.get(i).resetPosition();
+                score+=10;
+                if(totalMeteors > maxMeteors - meteors.size() -1) {
+                    meteors.remove(i);
+                }
+
+                totalMeteors++;
+            }
+        }
+
+
+        for (int i=0;i< meteors.size();i++) {
+            if (meteors.get(i).meteorSpaceshipDistance(meteors.get(i), spaceShip) <= meteors.get(i).getMeteorWidth() / 2) {
+                lives--;
+                meteors.get(i).resetPosition();
+            }
+        }
+
+        if (lives == 0) {
+            playing = false;
+        }
+
+        if (meteors.isEmpty()) {
+            meteorIsActive = false;
+        }
+
     }
 
     public void shoot() {
