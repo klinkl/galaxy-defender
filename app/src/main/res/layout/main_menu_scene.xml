@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:background="@drawable/background"
-    android:padding="16dp">
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="91dp"
+        android:layout_height="64dp"
         android:orientation="horizontal">
 
 
@@ -19,7 +19,7 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:layout_width="86dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/exit"
             android:contentDescription="exit"
@@ -31,7 +31,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
-
 
         <TextView
             android:id="@+id/Hello"
@@ -48,6 +47,18 @@
             android:textColor="#FFBB86FC"
             android:textSize="55sp"
             android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="press the PLAY to start the game"
+            android:textColor="#FFFFFFFF"
+            android:textSize="20sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#330022"
+            android:textSize="30sp" />
         <ImageButton
             android:layout_width="262dp"
             android:layout_height="wrap_content"

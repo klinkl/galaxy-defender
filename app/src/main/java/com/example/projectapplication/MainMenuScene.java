@@ -17,10 +17,14 @@ public class MainMenuScene extends AppCompatActivity {
         String message = intent.getStringExtra(UserInput.EXTRA_MESSAGE);
         TextView textView = (TextView) findViewById(R.id.wellcome);
         textView.setText(message);
+        System.out.println("we wellcomed "+message);
     }
 
     public void startGame(View view) {
         startActivity(new Intent(this, MainActivity.class));
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(UserInput.EXTRA_MESSAGE);
+        System.out.println(message+" entered the game");
         finish();
     }
     public void exitGame(View view) {

@@ -8,25 +8,40 @@
     tools:context=".UserInput"
     android:gravity="center"
     android:orientation="vertical"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:padding="10dp">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:orientation="horizontal">
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/exit"
+            android:contentDescription="exit"
+            android:onClick="exitGame" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="180dp"
         android:orientation="vertical"
         android:text="Wellcome"
         android:textColor="#FFBB86FC"
         android:textSize="55sp"
         android:textStyle="bold" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#330022"
-        android:textSize="60sp" />
+
     <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

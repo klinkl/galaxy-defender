@@ -17,6 +17,7 @@ public class UserInput extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("The Player entered the game");
         setContentView(R.layout.user_input);
         //setContentView(R.layout.main_menu_scene);
         inputText =(EditText) findViewById(R.id.inputText);
@@ -27,6 +28,7 @@ public class UserInput extends AppCompatActivity {
         String message = inputText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE,message);
         startActivity(intent);
+        System.out.println("It's "+message);
         finish();
     }
 }

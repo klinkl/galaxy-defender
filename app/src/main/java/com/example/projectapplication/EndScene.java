@@ -14,7 +14,7 @@ public class EndScene extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.end_scene);
+        setContentView(R.layout.game_over_scene);
         int scores = getIntent().getExtras().getInt("Your Score is");
         playerScore = findViewById(R.id.playerScore);
         playerScore.setText("" + scores);
