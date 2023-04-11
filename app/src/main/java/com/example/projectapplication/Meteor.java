@@ -12,7 +12,7 @@ public class Meteor {
     Random random;
 
     public Meteor (Context context) {
-        meteor = BitmapFactory.decodeResource(context.getResources(), R.drawable.a10000);
+        meteor = BitmapFactory.decodeResource(context.getResources(), R.drawable.meteor);
         random = new Random();
         resetPosition();
     }

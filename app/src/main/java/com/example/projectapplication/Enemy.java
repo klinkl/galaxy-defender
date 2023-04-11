@@ -100,7 +100,7 @@ public class Enemy extends Entity {
 
     public void moveDown (){
         this.y = getY() + (getHeight() / 5);
-        if (getSpeed() < 500){
+        if (getSpeed() < 300){
             setSpeed(getSpeed()* 1.05f);
         }
     }
@@ -150,8 +150,8 @@ public class Enemy extends Entity {
     }
 
     public void enterRageMode(){
-        setBulletFrequency(500);
-        setSpeed(500);
+        setBulletFrequency(1000);
+        setSpeed(375);
         setRageMode(true);
     }
     public void dropBullet(ArrayList<Bullet> bulletlist, Context context, Spaceship player, long fps) {
@@ -163,7 +163,7 @@ public class Enemy extends Entity {
                 probability = 50;
             }
         if (isRageMode()){
-            probability = 75;
+            probability = 100;
         }
         if (currentTime - lastBulletTime >= bulletFrequency) {
              int randomNumber = random.nextInt(100);
