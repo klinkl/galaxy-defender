@@ -20,7 +20,7 @@ public class WinnerScene extends AppCompatActivity {
         playerScore.setText("" + scores);
         Intent intent = getIntent();
         String message = intent.getStringExtra(UserInput.EXTRA_MESSAGE);
-        TextView textView = (TextView) findViewById(R.id.playerName);
+        TextView textView = (TextView) findViewById(R.id.winnerName);
         textView.setText(message);
     }
 
