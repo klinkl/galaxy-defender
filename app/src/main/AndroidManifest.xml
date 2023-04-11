@@ -21,7 +21,7 @@
         </activity>
         <activity android:name=".MainActivity">
         </activity>
-        <activity android:name=".EndScene">
+        <activity android:name=".WinnerScene">
         </activity>
     </application>
 

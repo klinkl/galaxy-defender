@@ -1,4 +1,4 @@
 package com.example.projectapplication;
 
-public class WinScene {
+public class GameOverScene {
 }

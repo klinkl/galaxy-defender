@@ -8,13 +8,13 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class EndScene extends AppCompatActivity {
+public class WinnerScene extends AppCompatActivity {
     TextView playerScore;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.game_over_scene);
+        setContentView(R.layout.winner_scene);
         int scores = getIntent().getExtras().getInt("Your Score is");
         playerScore = findViewById(R.id.playerScore);
         playerScore.setText("" + scores);
@@ -25,7 +25,7 @@ public class EndScene extends AppCompatActivity {
     }
 
     public void restart(View view) {
-        Intent intent = new Intent(EndScene.this, MainMenuScene.class);
+        Intent intent = new Intent(WinnerScene.this, MainMenuScene.class);
         startActivity(intent);
         finish();
     }
