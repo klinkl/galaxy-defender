@@ -23,15 +23,7 @@ public class Boss extends Entity{
     }
 
     private float maxhp;
-    public boolean isActive() {
-        return isActive;
-    }
 
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    private boolean isActive = false;
     private long lastTime =0;
     private int bulletfrequency= 750;
     private Stage currentStage = STAGE1;

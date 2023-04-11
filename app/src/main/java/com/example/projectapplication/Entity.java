@@ -98,14 +98,26 @@ public abstract class Entity {
         this.y = y;
     }
 
-    protected float x;
-    protected float y;
+    protected float x = 0;
+    protected float y = 0;
     protected int screenX;
     protected int screenY;
     protected float speed;
     protected MovingState movingState;
 
     protected RectF rectF;
+
+
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    protected boolean isActive = false;
 
 
 

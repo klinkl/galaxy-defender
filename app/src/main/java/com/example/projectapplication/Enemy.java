@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -21,31 +22,17 @@ protected float x;
   protected float speed;
 
  */
-    private boolean isMovingRight = true;
-    RectF rect;
-    boolean isVisible;
 
 
-    public RectF getRect() {
-        return rect;
+    public boolean isRageMode() {
+        return rageMode;
     }
 
-    public boolean isMovingRight() {
-        return isMovingRight;
+    public void setRageMode(boolean rageMode) {
+        this.rageMode = rageMode;
     }
 
-    public void setMovingRight(boolean movingRight) {
-        isMovingRight = movingRight;
-    }
-
-    public void setRect(RectF rect) {
-        this.rect = rect;
-    }
-
-    public void setVisible(boolean visible) {
-        isVisible = visible;
-    }
-
+    public boolean rageMode = false;
     public int getColumn() {
         return column;
     }
@@ -84,12 +71,12 @@ protected float x;
 
 
 
-    private static long bulletFrequency = 5000;
+    private static long bulletFrequency = 1000;
 
     public Enemy(Context context, int row, int column, int screenX, int screenY) {
 
         //blank RectF for collisionTesting
-        rect = new RectF();
+        rectF = new RectF();
 
         length = screenX / 10;
         height = screenX / 10;
@@ -109,83 +96,103 @@ protected float x;
                 false);
 
         // set other variables
-        isVisible = true;
-        this.screenX = screenX; // nötig?
-        this.screenY = screenY; // nötig?
+        setActive(true);
+        this.screenX = screenX;
+        this.screenY = screenY;
         this.column = column;
         this.row = row;
-        speed = 100;
+        this.speed = 100;
+        this.movingState = MovingState.RIGHT;
     }
 
     public void moveLeft(float distanceX){
-        x -= distanceX;
+
+        this.x = getX() - distanceX;
     }
 
     public void moveRight (float distanceX){
-        x += distanceX;
+        this.x =  getX() + distanceX;
     }
 
-    public void moveDown (float distanceY){
-        y += distanceY;
+    public void moveDown (){
+        this.y = getY() + (getHeight() / 5);
+        if (getSpeed() < 500){
+            setSpeed(getSpeed()* 1.05f);
+        }
+    }
+
+    public float predictNextX (long fps){
+        if (getMovingState() == MovingState.LEFT){
+            return getX() - (getSpeed() / fps);
+        }
+        else{
+            return getX() + (getSpeed() / fps);
+        }
     }
 
     public void changeDirection(){
-        if (isMovingRight){
-            isMovingRight = false;
+        if (getMovingState() == MovingState.LEFT){
+            setMovingState(MovingState.RIGHT);
         }
-        else isMovingRight = true;
-
-        moveDown(getHeight() / 5);
-        setSpeed((float) (getSpeed() * 1.01));
+        else setMovingState(MovingState.LEFT);
     }
 
-    public boolean canMoveHorizontally() {
-        if (x + length > screenX || x < 0 ) {
-            return false;
-        } else return true;
-
+  public boolean hitsBorder(long fps) {
+        float prediction = predictNextX(fps);
+        if (prediction + getLength() >= getScreenX() || prediction <= 0) {
+            return true;
+        } else return false;
     }
+
 
     public void move(long fps){
-        float distanceX = speed / fps;
-        if (isMovingRight) {
+        float distanceX = getSpeed() / fps;
+        if (getMovingState() == MovingState.RIGHT) {
             moveRight(distanceX);
         }
        else {
            moveLeft(distanceX);
        }
         //For hit-detection
-        rect.top = y;
-        rect.bottom = y + height;
-        rect.left = x;
-        rect.right = x + length;
+        rectF.top = y;
+        rectF.bottom = y + height;
+        rectF.left = x;
+        rectF.right = x + length;
     }
     public static void reduceBulletFrequency() {
-        if (Enemy.bulletFrequency >= 1000){
+        if (Enemy.bulletFrequency >= 500){
             Enemy.bulletFrequency -= 50;
         }
     }
-    public void dropBullet(ArrayList<Bullet> bulletlist, Context context, Spaceship player) {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastBulletTime >= bulletFrequency) {
-            int probability = 10; // 10% chance of dropping a bullet
 
-            Random random = new Random();
-            if (Math.abs(this.x - player.getX()) < player.getLength() / 2){
+    public void enterRageMode(){
+        setBulletFrequency(500);
+        setSpeed(500);
+        setRageMode(true);
+    }
+    public void dropBullet(ArrayList<Bullet> bulletlist, Context context, Spaceship player ) {
+        Random random = new Random();
+        int probability = 10; // 10% chance of dropping a bullet
+        long currentTime = System.currentTimeMillis();
+
+        if (Math.abs( getX() - player.getX()) < player.getLength() / 20 ){
                 probability = 50;
             }
-            int randomNumber = random.nextInt(1000);
-
-            if (randomNumber <= probability) {
-                // Create a new bullet object at the enemy's position
-                float bulletX = x;
-                float bulletY = y;
-                bulletlist.add(new Bullet(context,screenX, screenY, 1,bulletX, bulletY));
-                bulletlist.get( bulletlist.size()-1).shoot();
-                lastBulletTime = currentTime;
-            }
+        if (isRageMode()){
+            probability = 100;
         }
+        if (currentTime - lastBulletTime >= bulletFrequency) {
+             int randomNumber = random.nextInt(100);
 
+             if (randomNumber <= probability) {
+                 // Create a new bullet object at the enemy's position
+                 float bulletX = x;
+                 float bulletY = y;
+                 bulletlist.add(new Bullet(context,screenX, screenY, 1,bulletX, bulletY));
+                 bulletlist.get( bulletlist.size()-1).shoot();
+                 lastBulletTime = currentTime;
+             }
+         }
     }
 
     public RectF getActualRect(){
@@ -195,16 +202,13 @@ protected float x;
                 getX()+getLength()-diffx/2, getY()+getHeight()-diffy/2);
     }
 
-    public boolean isVisible() {
-        return isVisible;
-    }
 
     public void setInactive() {
-        setVisible(false);
+        setActive(false);
     }
 
     public boolean getStatus() {
-        return isVisible;
+        return isActive();
     }
 
 

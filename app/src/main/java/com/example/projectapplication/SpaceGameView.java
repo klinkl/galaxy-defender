@@ -119,7 +119,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             if (!paused) {
                 shoot();
                 update();
-                if (enemies.isEmpty())
+              if (enemies.isEmpty())
                 boss();
                 if (boss != null) {
                     boss.shoot(bossBulletList, context, spaceShip);
@@ -166,33 +166,32 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 enemyBullets.get(i).update(fps);
         }
 
-
-        // Enemy
+        // update enemy movement
         boolean hit = false;
-        // check screenHit of enemy
-        for (int i = 0; i < enemies.size(); i++) {
-            if (!enemies.get(i).canMoveHorizontally()) {
-                hit = true;
-                break;
+
+        for (int i = 0; i < enemies.size(); i++){
+            Enemy enemy = enemies.get(i);
+            if (enemies.size() < 10){
+                enemy.enterRageMode();
             }
+            enemy.dropBullet(enemyBullets, context, spaceShip);
+            enemy.move(fps);
+            if (enemy.hitsBorder(fps)){
+                hit = true;
+            };
+
         }
-
-
+        // System.out.print(hit);
         // change direction if screenHit
-        if (hit) {
+       if (hit) {
             Enemy.reduceBulletFrequency();
-            for (Enemy enemy : enemies) {
+            for (int i = 0; i < enemies.size(); i++){
+                Enemy enemy = enemies.get(i);
                 enemy.changeDirection();
+                enemy.moveDown();
             }
             hit = false;
         }
-
-        // update enemy movement
-        for (Enemy enemy : enemies) {
-            enemy.dropBullet(enemyBullets, context, spaceShip);
-            enemy.move(fps);
-        }
-
 
         if (boss != null) {
             boss.update();
@@ -209,6 +208,12 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             if (LocalTime.now().toNanoOfDay() / 1000000 - lastCollision >= 1000) {
                 if (RectangleCollison(spaceShip.getActualRect(), boss.getActualRect())) {
                     lives--;
+                    if (lives == 0) {
+                        // Game over
+                        gameOver();
+                        pause();
+
+                    }
                     lastCollision = LocalTime.now().toNanoOfDay() / 1000000;
                 }
             }
@@ -218,6 +223,12 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         while (i < bossBulletList.size()) {
             if (RectangleCollison(bossBulletList.get(i).getActualRect(), spaceShip.getActualRect())) {
                 lives--;
+                if (lives == 0) {
+                    // Game over
+                    gameOver();
+                    pause();
+
+                }
                 bossBulletList.remove(i);
                 continue;
             }
@@ -336,7 +347,9 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     lives--;
                     if (lives == 0) {
                         // Game over
+                        gameOver();
                         pause();
+
                     }
                 }
                 // Check if enemy bullet has gone out of the screen
@@ -415,7 +428,7 @@ private void drawdebug() {
 
             // draw all enemies
             for (Enemy enemy : enemies) {
-                if (enemy.isVisible()) {
+                if (enemy.isActive()) {
                     canvas.drawBitmap(enemy.getCurrentBitmap(), enemy.getX(), enemy.getY(), paint);
                 }
             }
