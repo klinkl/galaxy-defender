@@ -4,16 +4,16 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="10dp"
     android:background="@drawable/sprite">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="91dp"
+        android:layout_height="60dp"
         android:orientation="horizontal">
 
         <ImageButton
-            android:layout_width="98dp"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:background="@drawable/arrowback"
             android:contentDescription="restart"
@@ -31,18 +31,19 @@
             android:contentDescription="exit"
             android:onClick="exit" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="624dp"
         android:layout_gravity="center"
+        android:layout_marginBottom="90dp"
         android:gravity="center"
-        android:orientation="vertical"
-        android:layout_marginBottom="64dp">
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="225dp"
-            android:layout_height="wrap_content"
+            android:layout_width="197dp"
+            android:layout_height="216dp"
             android:background="@drawable/cup20_1"
             android:contentDescription="Email" />
 
@@ -53,15 +54,8 @@
             android:text="Congratulations"
             android:textColor="#FFBB86FC"
             android:textSize="40sp"
-            android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/winnerName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFBB86FC"
-            android:text=""
-            android:textSize="40sp"
             android:textStyle="bold" />
+
 
         <TextView
             android:id="@+id/ScoreText"
@@ -71,14 +65,20 @@
             android:textColor="#FFBB86FC"
             android:textSize="40sp"
             android:textStyle="bold" />
+
         <TextView
             android:id="@+id/WinScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
             android:textColor="#FFBB86FC"
-            android:textSize="45sp"
+            android:textSize="40sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp" />
     </LinearLayout>
 
 </LinearLayout>
