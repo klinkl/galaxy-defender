@@ -171,10 +171,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
         for (int i = 0; i < enemies.size(); i++){
             Enemy enemy = enemies.get(i);
-            if (enemies.size() < 10){
+            if (enemies.size() <= 5){
                 enemy.enterRageMode();
             }
-            enemy.dropBullet(enemyBullets, context, spaceShip);
+            enemy.dropBullet(enemyBullets, context, spaceShip , fps);
             enemy.move(fps);
             if (enemy.hitsBorder(fps)){
                 hit = true;

@@ -10,19 +10,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Enemy extends Entity {
-    /*
-  protected float hp;
-  public Bitmap sprite;
-  protected float height;
-  protected float length;
-protected float x;
-  protected float y;
-  protected int screenX;
-  protected int screenY;
-  protected float speed;
-
- */
-
 
     public boolean isRageMode() {
         return rageMode;
@@ -68,10 +55,7 @@ protected float x;
         Enemy.bulletFrequency = bulletFrequency;
     }
 
-
-
-
-    private static long bulletFrequency = 1000;
+    private static long bulletFrequency = 1500;
 
     public Enemy(Context context, int row, int column, int screenX, int screenY) {
 
@@ -170,24 +154,24 @@ protected float x;
         setSpeed(500);
         setRageMode(true);
     }
-    public void dropBullet(ArrayList<Bullet> bulletlist, Context context, Spaceship player ) {
+    public void dropBullet(ArrayList<Bullet> bulletlist, Context context, Spaceship player, long fps) {
         Random random = new Random();
         int probability = 10; // 10% chance of dropping a bullet
         long currentTime = System.currentTimeMillis();
 
-        if (Math.abs( getX() - player.getX()) < player.getLength() / 20 ){
+        if (Math.abs( getX() - player.getX()) < player.getLength() /2 ){
                 probability = 50;
             }
         if (isRageMode()){
-            probability = 100;
+            probability = 75;
         }
         if (currentTime - lastBulletTime >= bulletFrequency) {
              int randomNumber = random.nextInt(100);
 
              if (randomNumber <= probability) {
                  // Create a new bullet object at the enemy's position
-                 float bulletX = x;
-                 float bulletY = y;
+                 float bulletX = getX();
+                 float bulletY = getY();
                  bulletlist.add(new Bullet(context,screenX, screenY, 1,bulletX, bulletY));
                  bulletlist.get( bulletlist.size()-1).shoot();
                  lastBulletTime = currentTime;
