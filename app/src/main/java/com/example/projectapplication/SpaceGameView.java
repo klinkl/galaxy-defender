@@ -3,11 +3,13 @@ package com.example.projectapplication;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -24,7 +26,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private int numEnemies = 0;
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private ArrayList<Bullet> enemyBullets = new ArrayList<>();
-
+    Handler handler;
     private Context context;
 
     // This is our thread
@@ -58,7 +60,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     public int score = 0;
 
     // Lives
-    private int lives = 4;
+    private int lives = 1;
 
     long lastTime = 0;
     private Spaceship spaceShip;
@@ -153,7 +155,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 }
                 update();
               if (enemies.isEmpty()) {
+                  //GameOverScene game   = new GameOverScene();
+
                   startMeteorShower(50);
+
               }
 
               if (meteors.isEmpty()) {
@@ -250,6 +255,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     if (lives == 0) {
                         // Game over
                         gameOver();
+
                         pause();
 
                     }
@@ -386,9 +392,12 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     lives--;
                     if (lives == 0) {
                         // Game over
-                        gameOver();
-                        pause();
-
+                        paused = true;
+                        handler = null;
+                        Intent intent = new Intent(context, GameOverScene.class);
+                        intent.putExtra("points", score);
+                        context.startActivity(intent);
+                        ((Activity) context).finish();
                     }
                 }
                 // Check if enemy bullet has gone out of the screen
@@ -430,6 +439,12 @@ private void drawdebug() {
 }
     public void gameOver(){
         System.out.print("Game Over");
+        paused = true;
+        handler = null;
+        Intent intent = new Intent(context, GameOverScene.class);
+        intent.putExtra("points", score);
+        context.startActivity(intent);
+        ((Activity) context).finish();
     }
 
 
