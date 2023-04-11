@@ -3,11 +3,13 @@ package com.example.projectapplication;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -24,7 +26,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private int numEnemies = 0;
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private ArrayList<Bullet> enemyBullets = new ArrayList<>();
-
+    Handler handler;
     private Context context;
 
     // This is our thread
@@ -58,7 +60,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     public int score = 0;
 
     // Lives
-    private int lives = 4;
+    private int lives = 1000;
 
     long lastTime = 0;
     private Spaceship spaceShip;
@@ -153,7 +155,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 }
                 update();
               if (enemies.isEmpty()) {
+                  //GameOverScene game   = new GameOverScene();
+
                   startMeteorShower(50);
+
               }
 
               if (meteors.isEmpty()) {
@@ -250,8 +255,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     if (lives == 0) {
                         // Game over
                         gameOver();
-                        pause();
-
                     }
                     lastCollision = LocalTime.now().toNanoOfDay() / 1000000;
                 }
@@ -265,8 +268,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 if (lives == 0) {
                     // Game over
                     gameOver();
-                    pause();
-
                 }
                 bossBulletList.remove(i);
                 continue;
@@ -387,8 +388,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     if (lives == 0) {
                         // Game over
                         gameOver();
-                        pause();
-
                     }
                 }
                 // Check if enemy bullet has gone out of the screen
@@ -405,6 +404,7 @@ private void boss(){
             boss.setActive(true);
             if (boss.getHp() < 0)
                 boss = null;
+            winGame();
         }
 }
 private void drawdebug() {
@@ -429,11 +429,27 @@ private void drawdebug() {
 
 }
     public void gameOver(){
+
+        paused = true;
+        handler = null;
+        Intent intent = new Intent(context, GameOverScene.class);
+        intent.putExtra("score", score);
+        context.startActivity(intent);
+        ((Activity) context).finish();
         System.out.print("Game Over");
     }
 
 
+    public void winGame(){
 
+        paused = true;
+        handler = null;
+        Intent intent = new Intent(context, WinnerScene.class);
+        intent.putExtra("score", score);
+        context.startActivity(intent);
+        ((Activity) context).finish();
+        System.out.print("Winner!");
+    }
 
     private void draw() {
         // Make sure our drawing surface is valid or we crash
@@ -447,7 +463,7 @@ private void drawdebug() {
             // Choose the brush color for drawing
             paint.setColor(Color.argb(255, 255, 255, 255));
 
-            bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);
+            bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.sprite);
             bitmapback = Bitmap.createScaledBitmap(bitmapback, (int) (screenX), (int) (screenY), false);
 
             //  canvas.drawBitmap(background.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
@@ -531,7 +547,8 @@ private void drawdebug() {
         }
 
         if (lives == 0) {
-            playing = false;
+            //playing = false;
+            gameOver();
         }
 
         if (meteors.isEmpty()) {
