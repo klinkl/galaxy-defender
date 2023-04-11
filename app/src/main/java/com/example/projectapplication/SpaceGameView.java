@@ -23,6 +23,9 @@ import java.util.ArrayList;
 
 public class SpaceGameView extends SurfaceView implements Runnable {
 
+    long enemiesDiedTime = 0;
+    long meteorsVanishedTime = 0;
+
     private int numEnemies = 0;
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private ArrayList<Bullet> enemyBullets = new ArrayList<>();
@@ -70,6 +73,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     private Boss boss;
 
+    int level = 0;
+
 //Finns
     private ArrayList<Meteor> meteors;
 
@@ -103,6 +108,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         dHeight = point.y;
         totalMeteors = 0;
         meteorIsActive = false;
+        level = 1;
         initLevel();
     }
 
@@ -136,26 +142,28 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             long startFrameTime = System.currentTimeMillis();
             // Update the frame
             if (!paused) {
-                if (!meteorIsActive) {
+                if (level != 2){
                     shoot();
                 }
                 update();
-                if (enemies.isEmpty()) {
-                    //GameOverScene game   = new GameOverScene();
-                    startMeteorShower(50);
-                }
 
-                if (meteors.isEmpty()) {
-                    boss();
+                if (level == 2){
+                    if (enemies.isEmpty() && System.currentTimeMillis() > enemiesDiedTime + 5000) {
+                        startMeteorShower(10);
+                    }
                 }
-
-                if (boss != null) {
-                    boss.shoot(bossBulletList, context, spaceShip);
-                    boss.move(spaceShip);
+                if (level ==3){
+                    if (meteors.isEmpty() && System.currentTimeMillis() > meteorsVanishedTime + 10000) {
+                        boss();
+                        if (boss != null) {
+                            boss.shoot(bossBulletList, context, spaceShip);
+                            boss.move(spaceShip);
+                        }
+                        else {
+                            win();
+                        }
+                    }
                 }
-             /*   if (boss==null) {
-                    winGame();
-                }*/
             }
             // Draw the frame
             draw();
@@ -173,6 +181,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private void update() {
 
         spaceShip.update(fps);
+
+
         for (int i = 0; i < bossBulletList.size(); i++) {
             if (bossBulletList.get(i).getStatus())
                 bossBulletList.get(i).update(fps);
@@ -183,7 +193,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 bulletList.get(i).update(fps);
         }
 
-        //enemybulletList
+
+        //Update enemybulletList
         for (int i = 0; i < enemyBullets.size(); i++) {
             if (enemyBullets.get(i).getStatus())
                 enemyBullets.get(i).update(fps);
@@ -192,11 +203,13 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         // update enemy movement
         boolean hit = false;
 
+
         for (int i = 0; i < enemies.size(); i++){
             Enemy enemy = enemies.get(i);
             if (enemies.size() <= 5){
                 enemy.enterRageMode();
             }
+
             enemy.dropBullet(enemyBullets, context, spaceShip , fps);
             enemy.move(fps);
             if (enemy.hitsBorder(fps)){
@@ -233,6 +246,28 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                         gameOver();
                     }
                     lastCollision = LocalTime.now().toNanoOfDay() / 1000000;
+                }
+            }
+        }
+
+
+        if (level == 1) {
+            if (System.currentTimeMillis() - lastCollision >= 1000) {
+                for (int i = 0; i < enemies.size(); i++){
+                    Enemy enemy = enemies.get(i);
+                    if (spaceShip.getActualRect().intersect(enemy.getActualRect())){
+                        lives--;
+                        if (lives == 0) {
+                            // Game over
+                            gameOver();
+                        }
+                        enemies.remove(enemy);
+                        if (enemies.isEmpty()){
+                            enemiesDiedTime = System.currentTimeMillis();
+                            level = 2;
+                        }
+                        lastCollision = LocalTime.now().toNanoOfDay() / 1000000;
+                    }
                 }
             }
         }
@@ -320,6 +355,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                                 enemies.get(j).setInactive();
                                 bulletList.remove(bullet);
                                 enemies.remove(enemy);
+                                if (enemies.isEmpty()){
+                                    enemiesDiedTime = System.currentTimeMillis();
+                                    level = 2;
+                                }
                                 score += 10;
                                 continue;
                             }
@@ -333,14 +372,17 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                         continue;
                     }
                     if (bullet.getImpactPointY() < 0) {
+                        bullet.setInactive();
                         bulletList.remove(bullet);
                         continue;
                     }
                     if (bullet.getImpactPointX() > screenX) {
+                        bullet.setInactive();
                         bulletList.remove(bullet);
                         continue;
                     }
                     if (bullet.getImpactPointX() < 0) {
+                        bullet.setInactive();
                         bulletList.remove(bullet);
                         continue;
                     }
@@ -358,7 +400,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     // Enemy bullet has hit the spaceship
                     enemyBullet.setInactive();
                     enemyBullets.remove(enemyBullet);
-                    System.out.println(lives);
                     lives--;
                     if (lives == 0) {
                         // Game over
@@ -396,16 +437,24 @@ private void drawdebug() {
             canvas.drawRect(bossBulletList.get(i).getActualRect(), paint);
         canvas.drawBitmap(bossBulletList.get(i).getBitmapBullet(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
     }
-    if (boss != null) {
+    /*if (boss != null) {
         canvas.drawRect(boss.getActualRect(), paint);
         canvas.drawBitmap(boss.getCurrentBitmap(), boss.getX(), boss.getY(), paint);
     }
+         */
+
+    /*for (int i = 0; i < enemies.size(); i++) {
+        if (enemies.get(i).getStatus())
+            canvas.drawRect(enemies.get(i).getActualRect(), paint);
+        canvas.drawBitmap(enemies.get(i).getCurrentBitmap(), enemies.get(i).getX(), enemies.get(i).getY(), paint);
+    }
+
+     */
     canvas.drawRect(spaceShip.getActualRect(), paint);
     canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
 }
     public void gameOver(){
-
         paused = true;
         handler = null;
         Intent intent = new Intent(context, GameOverScene.class);
@@ -414,6 +463,11 @@ private void drawdebug() {
         ((Activity) context).finish();
         System.out.print("Game Over");
     }
+
+    public void win(){
+        Log.d("App", "You win");
+        playing = false;
+    };
 
 
     public void winGame(){
@@ -494,12 +548,11 @@ private void drawdebug() {
     public void startMeteorShower (int maxMeteors) {
 
         meteorIsActive = true;
-
         for (int i = 0; i < meteors.size(); i++) {
 
             meteors.get(i).meteorY += meteors.get(i).meteorSpeed;
             meteors.get(i).meteorX += meteors.get(i).meteorOffset;
-            if (meteors.get(i).meteorY >= dHeight ||
+            if (meteors.get(i).meteorY >= screenY ||
                     meteors.get(i).meteorX > 1000 ||
                     meteors.get(i).meteorX < -200) {
                 meteors.get(i).resetPosition();
@@ -520,12 +573,13 @@ private void drawdebug() {
         }
 
         if (lives == 0) {
-            //playing = false;
             gameOver();
         }
 
         if (meteors.isEmpty()) {
             meteorIsActive = false;
+            meteorsVanishedTime = System.currentTimeMillis();
+            level = 3;
         }
     }
 

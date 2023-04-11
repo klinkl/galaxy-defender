@@ -46,13 +46,10 @@ public class Spaceship extends Entity{
 
 
     public void update(long fps){
-
-
         rect.top = y;
         rect.bottom = y + height;
         rect.left = x;
         rect.right = x + length;
-
     }
 
 
