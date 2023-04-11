@@ -51,8 +51,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFBB86FC"
-            android:textSize="100sp"
+            android:textSize="55sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#330022"
+            android:textSize="100sp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -60,7 +60,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     public int score = 0;
 
     // Lives
-    private int lives = 1000;
+    private int lives = 2;
 
     long lastTime = 0;
     private Spaceship spaceShip;
@@ -76,7 +76,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     static int dWidth, dHeight;
 
     int totalMeteors;
-
     boolean meteorIsActive;
 
     // This special constructor method runs
@@ -89,16 +88,12 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
         // Make a globally available copy of the context so we can use it in another method
         this.context = context;
-
         // Initialize ourHolder and paint objects
         ourHolder = getHolder();
         paint = new Paint();
-
         screenX = x;
         screenY = y;
-
         meteors = new ArrayList<>();
-
 
         //Finns
         Display display =  ((Activity) getContext()).getWindowManager().getDefaultDisplay();
@@ -106,14 +101,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         display.getSize(point);
         dWidth = point.x;
         dHeight = point.y;
-
         totalMeteors = 0;
-
         meteorIsActive = false;
-
         initLevel();
     }
-
 
     private void initLevel() {
 
@@ -129,19 +120,14 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         enemies = new ArrayList<>();
         // screenX / length of two enemies
         int numColumns = screenX / (2 * screenX / 10);
-
         // Create the enemies and add them to the list
         for (int row = 0; row < 1; row++) {
             for (int column = 0; column < numColumns; column++) {
                 Enemy enemy = new Enemy(getContext(), row, column, screenX, screenY);
                 enemies.add(enemy);
             }
-
         }
-
-
     }
-
 
     @Override
     public void run() {
@@ -154,26 +140,25 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     shoot();
                 }
                 update();
-              if (enemies.isEmpty()) {
-                  //GameOverScene game   = new GameOverScene();
+                if (enemies.isEmpty()) {
+                    //GameOverScene game   = new GameOverScene();
+                    startMeteorShower(50);
+                }
 
-                  startMeteorShower(50);
-
-              }
-
-              if (meteors.isEmpty()) {
-                  boss();
-              }
+                if (meteors.isEmpty()) {
+                    boss();
+                }
 
                 if (boss != null) {
                     boss.shoot(bossBulletList, context, spaceShip);
                     boss.move(spaceShip);
                 }
+             /*   if (boss==null) {
+                    winGame();
+                }*/
             }
             // Draw the frame
-
             draw();
-
 
             // Calculate the fps this frame
             // We can then use the result to
@@ -182,11 +167,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             if (timeThisFrame >= 1) {
                 fps = 1000 / timeThisFrame;
             }
-
         }
-
     }
-
 
     private void update() {
 
@@ -200,9 +182,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             if (bulletList.get(i).getStatus())
                 bulletList.get(i).update(fps);
         }
-
-
-
 
         //enemybulletList
         for (int i = 0; i < enemyBullets.size(); i++) {
@@ -223,7 +202,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             if (enemy.hitsBorder(fps)){
                 hit = true;
             };
-
         }
         // System.out.print(hit);
         // change direction if screenHit
@@ -242,9 +220,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         }
 
         checkCollisions();
-
     }
-
 
     private void checkCollisions() {
 
@@ -301,7 +277,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     continue;
                 }
             }
-
 
             if (bulletList.get(i).getImpactPointY() < 0) {
                 bulletList.remove(i);
@@ -402,9 +377,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 private void boss(){
         if (boss != null) {
             boss.setActive(true);
-            if (boss.getHp() < 0)
+            if (boss.getHp() < 0) {
                 boss = null;
-            winGame();
+                winGame();
+            }
         }
 }
 private void drawdebug() {
@@ -441,7 +417,6 @@ private void drawdebug() {
 
 
     public void winGame(){
-
         paused = true;
         handler = null;
         Intent intent = new Intent(context, WinnerScene.class);
@@ -484,7 +459,6 @@ private void drawdebug() {
                     canvas.drawBitmap(meteors.get(i).getMeteor(), meteors.get(i).meteorX, meteors.get(i).meteorY, null);
                 }
             }
-
 
             canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
@@ -538,7 +512,6 @@ private void drawdebug() {
             }
         }
 
-
         for (int i=0;i< meteors.size();i++) {
             if (meteors.get(i).meteorSpaceshipDistance(meteors.get(i), spaceShip) <= meteors.get(i).getMeteorWidth() / 2) {
                 lives--;
@@ -554,7 +527,6 @@ private void drawdebug() {
         if (meteors.isEmpty()) {
             meteorIsActive = false;
         }
-
     }
 
     public void shoot() {
@@ -567,7 +539,6 @@ private void drawdebug() {
         }
     }
 
-
     // If SpaceGameActivity is paused/stopped
     // shutdown our thread.
     public void pause() {
@@ -577,9 +548,7 @@ private void drawdebug() {
         } catch (InterruptedException e) {
             Log.e("Error:", "joining thread");
         }
-
     }
-
 
     // If SpaceInvadersActivity is started then
     // start our thread.
@@ -588,7 +557,6 @@ private void drawdebug() {
         gameThread = new Thread(this);
         gameThread.start();
     }
-
 
     // The SurfaceView class implements onTouchListener
     // So we can override this method and detect screen touches.
@@ -606,14 +574,12 @@ private void drawdebug() {
                         (motionEvent.getY() - spaceShip.getHeight()/2));
 
                 break;
-
             // Player has removed finger from screen
             case MotionEvent.ACTION_UP:
 
                 break;
         }
         return true;
-
     }
 
 public boolean RectangleCollison(RectF rect1, RectF rect2){
