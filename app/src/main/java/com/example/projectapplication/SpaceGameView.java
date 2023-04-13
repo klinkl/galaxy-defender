@@ -112,6 +112,17 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         initLevel();
     }
 
+    private void startSecondLevel(){
+        boolean wait = true;
+        long startTime = System.currentTimeMillis();
+        long waitTime = 5000;
+        while (System.currentTimeMillis() - startTime < waitTime) {
+
+            }
+        startMeteorShower(50);
+        }
+
+
 
     private void initLevel() {
 
@@ -153,7 +164,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 }
                 update();
               if (enemies.isEmpty()) {
-                  startMeteorShower(50);
+                  //startMeteorShower(50);
+                  startSecondLevel();
               }
 
               if (meteors.isEmpty()) {

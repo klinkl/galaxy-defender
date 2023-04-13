@@ -150,8 +150,8 @@ public class Enemy extends Entity {
     }
 
     public void enterRageMode(){
-        setBulletFrequency(500);
-        setSpeed(500);
+        setBulletFrequency(1000);
+        setSpeed(100);
         setRageMode(true);
     }
     public void dropBullet(ArrayList<Bullet> bulletlist, Context context, Spaceship player, long fps) {
