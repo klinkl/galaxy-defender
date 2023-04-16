@@ -63,7 +63,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     public int score = 0;
 
     // Lives
-    private int lives = 2;
+    private int lives = 20;
 
     long lastTime = 0;
     private Spaceship spaceShip;
@@ -71,6 +71,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private ArrayList<Bullet> bossBulletList = new ArrayList<Bullet>();
     private Bitmap bitmapback;
 
+    private ArrayList<Explosion> explosionArrayList = new ArrayList<Explosion>();
     private Boss boss;
 
     int level = 0;
@@ -133,6 +134,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 enemies.add(enemy);
             }
         }
+
     }
 
     @Override
@@ -233,6 +235,15 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         }
 
         checkCollisions();
+        int i=0;
+        while( i<explosionArrayList.size()){
+            explosionArrayList.get(i).update();
+            if (explosionArrayList.get(i).getCurrentFrame()>63) {
+                explosionArrayList.remove(i);
+                i--;
+            }
+            i++;
+        }
     }
 
     private void checkCollisions() {
@@ -350,6 +361,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                         if (enemy.getStatus()) {
                             RectF enemyRect = enemy.getActualRect();
                             if (RectF.intersects(bullet.getActualRect(), enemyRect)) {
+                                explosionArrayList.add(new Explosion(context, (int)(enemyRect.left-64),(int)(enemyRect.top-64)));
                                 // Bullet and enemy have collided
                                 bullet.setInactive();
                                 enemies.get(j).setInactive();
@@ -521,6 +533,9 @@ private void drawdebug() {
                 if (enemy.isActive()) {
                     canvas.drawBitmap(enemy.getCurrentBitmap(), enemy.getX(), enemy.getY(), paint);
                 }
+            }
+            for (int i =0; i< explosionArrayList.size(); i++){
+                canvas.drawBitmap(explosionArrayList.get(i).getCurrentBitmap(),explosionArrayList.get(i).getX(),explosionArrayList.get(i).getY(), paint);
             }
             for (int i = 0; i < bossBulletList.size(); i++) {
                 if (bossBulletList.get(i).getStatus())
