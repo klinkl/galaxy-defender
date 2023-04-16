@@ -63,7 +63,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     public int score = 0;
 
     // Lives
-    private int lives = 20;
+    private int lives = 200;
 
     long lastTime = 0;
     private Spaceship spaceShip;
@@ -348,6 +348,9 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             if (boss != null) {
                 if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect()) && boss.isActive()) {
                     boss.setHp(boss.getHp() - 20);
+                    if (boss.getHp()<0.1* boss.getMaxhp()){
+                        explosionArrayList.add(new Explosion(context, (int)(bulletList.get(i).getActualRect().left-64),(int)(bulletList.get(i).getActualRect().top-64)));
+                    }
                     bulletList.remove(i);
                     continue;
                 }
