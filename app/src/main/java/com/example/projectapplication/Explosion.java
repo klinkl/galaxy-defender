@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
+import android.media.MediaPlayer;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,6 @@ private int y;
     }
 
     private int currentFrame;
-
     public Explosion(Context context, int x, int y) {
         String filename;
         for (int i=0; i<=63; i++){

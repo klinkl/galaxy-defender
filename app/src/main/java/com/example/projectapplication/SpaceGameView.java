@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
@@ -83,7 +84,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     int totalMeteors;
     boolean meteorIsActive;
-
+    MediaPlayer mediaPlayer;
     // This special constructor method runs
     public SpaceGameView(Context context, int x, int y) {
 
@@ -112,7 +113,14 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         level = 1;
         initLevel();
     }
-
+public void playExplosion(){
+        mediaPlayer = MediaPlayer.create(context, R.raw.explosion);
+        mediaPlayer.start();
+}
+public void playShoot(){
+    mediaPlayer = MediaPlayer.create(context, R.raw.alienshoot1);
+    mediaPlayer.start();
+}
     private void initLevel() {
 
         spaceShip = new Spaceship(context, screenX, screenY);
@@ -159,6 +167,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                         boss();
                         if (boss != null) {
                             boss.shoot(bossBulletList, context, spaceShip);
+                            playShoot();
                             boss.move(spaceShip);
                         }
                         else {
@@ -350,6 +359,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                     boss.setHp(boss.getHp() - 20);
                     if (boss.getHp()<0.1* boss.getMaxhp()){
                         explosionArrayList.add(new Explosion(context, (int)(bulletList.get(i).getActualRect().left-64),(int)(bulletList.get(i).getActualRect().top-64)));
+                        playExplosion();
                     }
                     bulletList.remove(i);
                     continue;
@@ -365,6 +375,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                             RectF enemyRect = enemy.getActualRect();
                             if (RectF.intersects(bullet.getActualRect(), enemyRect)) {
                                 explosionArrayList.add(new Explosion(context, (int)(enemyRect.left-64),(int)(enemyRect.top-64)));
+                                playExplosion();
                                 // Bullet and enemy have collided
                                 bullet.setInactive();
                                 enemies.get(j).setInactive();
@@ -606,7 +617,7 @@ private void drawdebug() {
             bulletList.add(new Bullet(context, screenY, screenX,0,spaceShip.getX()+( spaceShip.getLength() /6)
                     , spaceShip.getY() + spaceShip.getHeight() / 2));
             bulletList.get(bulletList.size() - 1).shoot();
-
+            playShoot();
             lastTime = LocalTime.now().toNanoOfDay() / 1000000;
         }
     }
