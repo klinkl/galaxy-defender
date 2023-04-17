@@ -63,7 +63,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     public int score = 0;
 
     // Lives
-    private int lives = 2;
+    private int lives = 0;
 
     long lastTime = 0;
     private Spaceship spaceShip;
@@ -78,7 +78,6 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 //Finns
     private ArrayList<Meteor> meteors;
 
-    static int dWidth, dHeight;
 
     int totalMeteors;
     boolean meteorIsActive;
@@ -99,16 +98,15 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         screenX = x;
         screenY = y;
         meteors = new ArrayList<>();
+        level = 1;
+        lives = 5;
 
         //Finns
         Display display =  ((Activity) getContext()).getWindowManager().getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
-        dWidth = point.x;
-        dHeight = point.y;
         totalMeteors = 0;
         meteorIsActive = false;
-        level = 1;
         initLevel();
     }
 
@@ -123,17 +121,21 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             meteors.add(meteor);
         }
 
+
         enemies = new ArrayList<>();
+
         // screenX / length of two enemies
         int numColumns = screenX / (2 * screenX / 10);
         // Create the enemies and add them to the list
-        for (int row = 0; row < 1; row++) {
+        for (int row = 0; row < 5; row++) {
             for (int column = 0; column < numColumns; column++) {
                 Enemy enemy = new Enemy(getContext(), row, column, screenX, screenY);
                 enemies.add(enemy);
             }
         }
+
     }
+
 
     @Override
     public void run() {
@@ -141,6 +143,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
             // Capture the current time in milliseconds in startFrameTime
             long startFrameTime = System.currentTimeMillis();
             // Update the frame
+
             if (!paused) {
                 if (level != 2){
                     shoot();
@@ -148,11 +151,14 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                 update();
 
                 if (level == 2){
-                    if (enemies.isEmpty() && System.currentTimeMillis() > enemiesDiedTime + 5000) {
+                   if (enemies.isEmpty() && System.currentTimeMillis() > enemiesDiedTime + 5000) {
                         startMeteorShower(10);
-                    }
+                   }
                 }
                 if (level ==3){
+                    if (!boss.isActive()){
+                        Invader.setLastBulletTime(0);
+                    }
                     if (meteors.isEmpty() && System.currentTimeMillis() > meteorsVanishedTime + 10000) {
                         boss();
                         if (boss != null) {
@@ -162,8 +168,10 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                         else {
                             win();
                         }
-                    }
+                   }
                 }
+
+
             }
             // Draw the frame
             draw();
@@ -203,23 +211,23 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         // update enemy movement
         boolean hit = false;
 
-
         for (int i = 0; i < enemies.size(); i++){
             Enemy enemy = enemies.get(i);
+            //enter RageMode when there are 5 or less enemies
             if (enemies.size() <= 5){
                 enemy.enterRageMode();
             }
-
-            enemy.dropBullet(enemyBullets, context, spaceShip , fps);
+            enemy.shoot(enemyBullets, context, spaceShip );
             enemy.move(fps);
+
+            //check if enemy hits border
             if (enemy.hitsBorder(fps)){
                 hit = true;
             };
         }
-        // System.out.print(hit);
-        // change direction if screenHit
+        // change direction and move down if enemy hits border
        if (hit) {
-            Enemy.reduceBulletFrequency();
+            Enemy.increaseFrequency();
             for (int i = 0; i < enemies.size(); i++){
                 Enemy enemy = enemies.get(i);
                 enemy.changeDirection();
@@ -429,13 +437,13 @@ private void drawdebug() {
     for (int i = 0; i < bulletList.size(); i++) {
         if (bulletList.get(i).getStatus())
             canvas.drawRect(bulletList.get(i).getActualRect(), paint);
-        canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
+        canvas.drawBitmap(bulletList.get(i).getCurrentBitmap(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
 
     }
     for (int i = 0; i < bossBulletList.size(); i++) {
         if (bossBulletList.get(i).getStatus())
             canvas.drawRect(bossBulletList.get(i).getActualRect(), paint);
-        canvas.drawBitmap(bossBulletList.get(i).getBitmapBullet(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
+        canvas.drawBitmap(bossBulletList.get(i).getCurrentBitmap(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
     }
     /*if (boss != null) {
         canvas.drawRect(boss.getActualRect(), paint);
@@ -492,7 +500,7 @@ private void drawdebug() {
             // Choose the brush color for drawing
             paint.setColor(Color.argb(255, 255, 255, 255));
 
-            bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.sprite);
+            bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.background4);
             bitmapback = Bitmap.createScaledBitmap(bitmapback, (int) (screenX), (int) (screenY), false);
 
             //  canvas.drawBitmap(background.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
@@ -501,16 +509,16 @@ private void drawdebug() {
 
             for (int i = 0; i < bulletList.size(); i++) {
                 if (bulletList.get(i).getStatus())
-                    canvas.drawBitmap(bulletList.get(i).getBitmapBullet(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
+                    canvas.drawBitmap(bulletList.get(i).getCurrentBitmap(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
             }
 
             for (int i = 0; i < enemyBullets.size(); i++) {
                 if (enemyBullets.get(i).getStatus())
-                    canvas.drawBitmap(enemyBullets.get(i).getBitmapBullet(), enemyBullets.get(i).getRect().left, enemyBullets.get(i).getRect().top, paint);
+                    canvas.drawBitmap(enemyBullets.get(i).getCurrentBitmap(), enemyBullets.get(i).getRect().left, enemyBullets.get(i).getRect().top, paint);
             }
             if (!meteors.isEmpty() && meteorIsActive == true) {
                 for (int i=0;i<meteors.size();i++) {
-                    canvas.drawBitmap(meteors.get(i).getMeteor(), meteors.get(i).meteorX, meteors.get(i).meteorY, null);
+                    canvas.drawBitmap(meteors.get(i).getCurrentBitmap(), meteors.get(i).getX(), meteors.get(i).getY(), null);
                 }
             }
 
@@ -524,7 +532,7 @@ private void drawdebug() {
             }
             for (int i = 0; i < bossBulletList.size(); i++) {
                 if (bossBulletList.get(i).getStatus())
-                    canvas.drawBitmap(bossBulletList.get(i).getBitmapBullet(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
+                    canvas.drawBitmap(bossBulletList.get(i).getCurrentBitmap(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
             }
             if (boss != null && boss.isActive()) {
                 canvas.drawBitmap(boss.getCurrentBitmap(), boss.getX(), boss.getY(), paint);
@@ -546,15 +554,13 @@ private void drawdebug() {
     }
 
     public void startMeteorShower (int maxMeteors) {
-
+        System.out.println(meteors.size());
         meteorIsActive = true;
         for (int i = 0; i < meteors.size(); i++) {
-
-            meteors.get(i).meteorY += meteors.get(i).meteorSpeed;
-            meteors.get(i).meteorX += meteors.get(i).meteorOffset;
-            if (meteors.get(i).meteorY >= screenY ||
-                    meteors.get(i).meteorX > 1000 ||
-                    meteors.get(i).meteorX < -200) {
+            meteors.get(i).move();
+            if (meteors.get(i).getY() >= screenY ||
+                    meteors.get(i).getX() > 1000 ||
+                    meteors.get(i).getX() < -200) {
                 meteors.get(i).resetPosition();
                 score+=10;
                 if(totalMeteors > maxMeteors - meteors.size() -1) {
@@ -566,7 +572,7 @@ private void drawdebug() {
         }
 
         for (int i=0;i< meteors.size();i++) {
-            if (meteors.get(i).meteorSpaceshipDistance(meteors.get(i), spaceShip) <= meteors.get(i).getMeteorWidth() / 2) {
+            if (meteors.get(i).meteorSpaceshipDistance(meteors.get(i), spaceShip) <= meteors.get(i).getCurrentBitmap().getWidth() / 2) {
                 lives--;
                 meteors.get(i).resetPosition();
             }
@@ -584,13 +590,7 @@ private void drawdebug() {
     }
 
     public void shoot() {
-        if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
-            bulletList.add(new Bullet(context, screenY, screenX,0,spaceShip.getX()+( spaceShip.getLength() /6)
-                    , spaceShip.getY() + spaceShip.getHeight() / 2));
-            bulletList.get(bulletList.size() - 1).shoot();
-
-            lastTime = LocalTime.now().toNanoOfDay() / 1000000;
-        }
+      spaceShip.shoot(bulletList, context, spaceShip);
     }
 
     // If SpaceGameActivity is paused/stopped
@@ -622,19 +622,14 @@ private void drawdebug() {
                 paused = false;
                 //Spaceship follows touch input
 
-                spaceShip.setX((int)
-                        (motionEvent.getX() - spaceShip.getLength() /2));
-                spaceShip.setY((int)
-                        (motionEvent.getY() - spaceShip.getHeight()/2));
-
+                spaceShip.move(motionEvent);
                 break;
             // Player has removed finger from screen
             case MotionEvent.ACTION_UP:
-
-                break;
         }
         return true;
     }
+
 
 public boolean RectangleCollison(RectF rect1, RectF rect2){
         if (rect1.left < rect2.right
