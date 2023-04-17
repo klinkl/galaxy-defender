@@ -628,8 +628,9 @@ private void drawdebug() {
     }
 
     public void shoot() {
-      spaceShip.shoot(bulletList, context, spaceShip);
-      playShoot();
+      if (spaceShip.shoot(bulletList, context, spaceShip)){
+          playShoot();
+      }
     }
 
     // If SpaceGameActivity is paused/stopped
