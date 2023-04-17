@@ -85,6 +85,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     int totalMeteors;
     boolean meteorIsActive;
     MediaPlayer mediaPlayer;
+    MediaPlayer musicPlayer;
     // This special constructor method runs
     public SpaceGameView(Context context, int x, int y) {
 
@@ -111,7 +112,14 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         totalMeteors = 0;
         meteorIsActive = false;
         level = 1;
+        playMusic();
         initLevel();
+    }
+    public void playMusic(){
+            musicPlayer = MediaPlayer.create(context, R.raw.skyfire);
+            musicPlayer.start();
+            musicPlayer.setLooping(true);
+            musicPlayer.setVolume((float)0.4,(float)0.4);
     }
 public void playExplosion(){
         mediaPlayer = MediaPlayer.create(context, R.raw.explosion);
@@ -167,7 +175,6 @@ public void playShoot(){
                         boss();
                         if (boss != null) {
                             boss.shoot(bossBulletList, context, spaceShip);
-                            playShoot();
                             boss.move(spaceShip);
                         }
                         else {
@@ -374,7 +381,7 @@ public void playShoot(){
                         if (enemy.getStatus()) {
                             RectF enemyRect = enemy.getActualRect();
                             if (RectF.intersects(bullet.getActualRect(), enemyRect)) {
-                                explosionArrayList.add(new Explosion(context, (int)(enemyRect.left-64),(int)(enemyRect.top-64)));
+                                explosionArrayList.add(new Explosion(context, (int)(enemyRect.left),(int)(enemyRect.top)));
                                 playExplosion();
                                 // Bullet and enemy have collided
                                 bullet.setInactive();
@@ -463,19 +470,18 @@ private void drawdebug() {
             canvas.drawRect(bossBulletList.get(i).getActualRect(), paint);
         canvas.drawBitmap(bossBulletList.get(i).getBitmapBullet(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
     }
-    /*if (boss != null) {
+    if (boss != null) {
         canvas.drawRect(boss.getActualRect(), paint);
         canvas.drawBitmap(boss.getCurrentBitmap(), boss.getX(), boss.getY(), paint);
     }
-         */
 
-    /*for (int i = 0; i < enemies.size(); i++) {
+
+    for (int i = 0; i < enemies.size(); i++) {
         if (enemies.get(i).getStatus())
             canvas.drawRect(enemies.get(i).getActualRect(), paint);
         canvas.drawBitmap(enemies.get(i).getCurrentBitmap(), enemies.get(i).getX(), enemies.get(i).getY(), paint);
     }
 
-     */
     canvas.drawRect(spaceShip.getActualRect(), paint);
     canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
