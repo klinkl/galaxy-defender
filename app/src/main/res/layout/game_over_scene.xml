@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="@drawable/sprite">
+    android:background="@drawable/background4_full_res">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -60,7 +60,7 @@
             android:id="@+id/ScoreText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="your Score:"
+            android:text="Your Score:"
             android:textColor="#FFBB86FC"
             android:textSize="40sp"
             android:textStyle="bold" />

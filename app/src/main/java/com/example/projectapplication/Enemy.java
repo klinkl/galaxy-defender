@@ -9,7 +9,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Enemy extends Entity {
+public class Enemy extends Invader {
 
     public boolean isRageMode() {
         return rageMode;
@@ -38,15 +38,7 @@ public class Enemy extends Entity {
 
     int column = 0;
     int row = 0;
-    private static long lastBulletTime;
 
-    public static long getLastBulletTime() {
-        return lastBulletTime;
-    }
-
-    public static void setLastBulletTime(long lastBulletTime) {
-        Enemy.lastBulletTime = lastBulletTime;
-    }
 
     public static long getBulletFrequency() {
         return bulletFrequency;
@@ -143,7 +135,7 @@ public class Enemy extends Entity {
         rectF.left = x;
         rectF.right = x + length;
     }
-    public static void reduceBulletFrequency() {
+    public static void increaseFrequency() {
         if (Enemy.bulletFrequency >= 500){
             Enemy.bulletFrequency -= 50;
         }
@@ -154,7 +146,7 @@ public class Enemy extends Entity {
         setSpeed(375);
         setRageMode(true);
     }
-    public void dropBullet(ArrayList<Bullet> bulletlist, Context context, Spaceship player, long fps) {
+    public void shoot(ArrayList<Bullet> bulletlist, Context context, Spaceship player) {
         Random random = new Random();
         int probability = 10; // 10% chance of dropping a bullet
         long currentTime = System.currentTimeMillis();
@@ -165,16 +157,16 @@ public class Enemy extends Entity {
         if (isRageMode()){
             probability = 100;
         }
-        if (currentTime - lastBulletTime >= bulletFrequency) {
+        if (currentTime - getLastBulletTime() >= bulletFrequency) {
              int randomNumber = random.nextInt(100);
 
              if (randomNumber <= probability) {
                  // Create a new bullet object at the enemy's position
                  float bulletX = getX();
                  float bulletY = getY();
-                 bulletlist.add(new Bullet(context,screenX, screenY, 1,bulletX, bulletY));
+                 bulletlist.add(new Bullet(context,screenX, screenY, MovingState.DOWN,bulletX, bulletY));
                  bulletlist.get( bulletlist.size()-1).shoot();
-                 lastBulletTime = currentTime;
+                 setLastBulletTime(currentTime);
              }
          }
     }
@@ -194,6 +186,7 @@ public class Enemy extends Entity {
     public boolean getStatus() {
         return isActive();
     }
+
 
 
 }

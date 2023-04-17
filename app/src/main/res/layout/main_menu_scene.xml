@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:background="@drawable/sprite"
+    android:background="@drawable/background3"
     android:padding="10dp">
 
     <LinearLayout
@@ -63,7 +63,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="press the PLAY to start the game"
+            android:text="Press PLAY to start the game"
             android:textColor="#FFFFFFFF"
             android:textSize="20sp" />
         <TextView

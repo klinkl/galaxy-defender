@@ -3,33 +3,29 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
+import android.view.MotionEvent;
+
+import java.time.LocalTime;
+import java.util.ArrayList;
 
 public class Spaceship extends Entity{
 
-
-    RectF rect;
-    private Bitmap bitmapup;
-    public final int STOPPED = 0;
-
-    ///maybe more movement than this
-    private int SpaceShipMoving = STOPPED;
-    private int speed;
-
+long lastTime = 0;
     public Spaceship(Context context, int screenX, int screenY){
 
-        rect = new RectF();
+        rectF = new RectF();
 
 
         x = screenX / 2;
         y =  screenY * 9/10;
 
         speed = 350;
-        bitmapup = BitmapFactory.decodeResource(context.getResources(), R.drawable.spaceship1);
+        currentBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.spaceship1);
         length = screenX/6;
         height = screenX/6;
 
         // stretch the bitmap to a size appropriate for the screen resolution
-        bitmapup = Bitmap.createScaledBitmap(bitmapup,
+        currentBitmap = Bitmap.createScaledBitmap(currentBitmap,
                 (int) (length),
                 (int) (height),
                 false);
@@ -37,8 +33,6 @@ public class Spaceship extends Entity{
         //  bitmapup = BitmapFactory.decodeResource(context.getResources(), R.drawable.spaceshipup);
         //  bitmapup = Bitmap.createScaledBitmap(bitmapup, (int) (length), (int) (height),false);
 
-
-        currentBitmap = bitmapup;
         this.screenX = screenX;
         this.screenY = screenY;
     }
@@ -46,15 +40,15 @@ public class Spaceship extends Entity{
 
 
     public void update(long fps){
-        rect.top = y;
-        rect.bottom = y + height;
-        rect.left = x;
-        rect.right = x + length;
+        rectF.top = y;
+        rectF.bottom = y + height;
+        rectF.left = x;
+        rectF.right = x + length;
     }
 
 
     public RectF getRect(){
-        return rect;
+        return rectF;
     }
 
     public RectF getActualRect(){
@@ -84,6 +78,26 @@ public class Spaceship extends Entity{
     public float getLength(){
         return length;
     }
+
+
+    public void move(MotionEvent motionEvent) {
+        setX((int)
+                (motionEvent.getX() - getLength() /2));
+        setY((int)
+                (motionEvent.getY() - getHeight()/2));
+    }
+
+    public void shoot(ArrayList<Bullet> bulletList, Context context, Spaceship spaceShip) {
+        if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
+            bulletList.add(new Bullet(context, screenY, screenX,MovingState.UP,spaceShip.getX()+( spaceShip.getLength() /6)
+                    , spaceShip.getY() + spaceShip.getHeight() / 2));
+            bulletList.get(bulletList.size() - 1).shoot();
+
+            lastTime = LocalTime.now().toNanoOfDay() / 1000000;
+        }
+    }
+
+
     public float getHeight(){
         return height;
     }
