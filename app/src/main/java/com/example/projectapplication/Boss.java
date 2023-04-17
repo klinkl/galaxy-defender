@@ -152,9 +152,9 @@ public class Boss extends Invader {
     public void drawHealthBar(Canvas canvas, Paint paint) {
         paint.setColor(Color.GRAY);
         float diff = (getMaxhp() - getLength()) / 2;
-        canvas.drawRect(getX() - diff, getY() - 50, getX() + getMaxhp(), getY() - 20, paint);
+        canvas.drawRect(getX() - diff, getY() - 50, getX() - diff + getMaxhp(), getY() - 20, paint);
         paint.setColor(Color.RED);
-        canvas.drawRect(getX() - diff, getY() - 50, getX() + getHp(), getY() - 20, paint);
+        canvas.drawRect(getX() - diff, getY() - 50, getX() - diff + getHp(), getY() - 20, paint);
     }
 
     public void setHp(float hp) {
