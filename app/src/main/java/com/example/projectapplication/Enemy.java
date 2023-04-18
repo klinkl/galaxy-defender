@@ -57,7 +57,7 @@ public class Enemy extends Invader {
         length = screenX / 10;
         height = screenX / 10;
 
-        x = column * (length + length/2);
+        x = column * (length + length/2 );
         y = row * (height);
 
 
