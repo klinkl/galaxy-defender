@@ -65,7 +65,7 @@ public class Boss extends Invader {
         rectF = new RectF(x, y, x + currentBitmap.getWidth(), y + currentBitmap.getHeight());
         hp = 750;
         maxhp = hp;
-        speed = 10;
+        speed = 5;
         setBulletfrequency(750);
     }
 
