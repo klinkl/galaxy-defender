@@ -373,7 +373,7 @@ public void playShoot(){
         i = 0;
         while ( i < bulletList.size()) {
             if (boss != null) {
-                if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect()) && boss.isActive()) {
+                if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect()) && boss.isActive() && (!boss.isInvincible())) {
                     boss.setHp(boss.getHp() - 20);
                     if (boss.getHp()<0.1* boss.getMaxhp()){
                         explosionArrayList.add(new Explosion(context, (int)(bulletList.get(i).getActualRect().left-64),(int)(bulletList.get(i).getActualRect().top-64)));
