@@ -40,15 +40,6 @@ public class Enemy extends Invader {
     int row = 0;
 
 
-    public static long getBulletFrequency() {
-        return bulletFrequency;
-    }
-    public static void setBulletFrequency(long bulletFrequency) {
-        Enemy.bulletFrequency = bulletFrequency;
-    }
-
-    private static long bulletFrequency = 1500;
-
     public Enemy(Context context, int row, int column, int screenX, int screenY) {
 
         //blank RectF for collisionTesting
@@ -73,6 +64,7 @@ public class Enemy extends Invader {
 
         // set other variables
         setActive(true);
+        setBulletfrequency(1500);
         this.screenX = screenX;
         this.screenY = screenY;
         this.column = column;
@@ -136,13 +128,13 @@ public class Enemy extends Invader {
         rectF.right = x + length;
     }
     public static void increaseFrequency() {
-        if (Enemy.bulletFrequency >= 500){
-            Enemy.bulletFrequency -= 50;
+        if (getBulletfrequency()>= 500){
+            setBulletfrequency(getBulletfrequency() - 50);
         }
     }
 
     public void enterRageMode(){
-        setBulletFrequency(1000);
+        setBulletfrequency(1000);
         setSpeed(375);
         setRageMode(true);
     }
@@ -157,7 +149,7 @@ public class Enemy extends Invader {
         if (isRageMode()){
             probability = 100;
         }
-        if (currentTime - getLastBulletTime() >= bulletFrequency) {
+        if (currentTime - getLastBulletTime() >= getBulletfrequency()) {
              int randomNumber = random.nextInt(100);
 
              if (randomNumber <= probability) {
