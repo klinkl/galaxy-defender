@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 
 public class UserInput extends AppCompatActivity {
     public static final String EXTRA_MESSAGE ="com.example.projectapplication.MESSAGE";
@@ -16,12 +18,14 @@ public class UserInput extends AppCompatActivity {
     public static final int TEXT_REQUEST = 1;
     @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         System.out.println("The Player entered the game");
         setContentView(R.layout.user_input);
         //setContentView(R.layout.main_menu_scene);
         inputText =(EditText) findViewById(R.id.inputText);
         textView = (TextView) findViewById(R.id.welcome);
+
     }
     public void submition(View view) {
         Intent intent =new Intent(this,MainMenuScene.class);

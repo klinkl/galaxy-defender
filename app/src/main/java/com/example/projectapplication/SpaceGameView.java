@@ -530,17 +530,19 @@ private void drawdebug() {
             canvas = ourHolder.lockCanvas();
 
             // Draw the background color
-            canvas.drawColor(Color.argb(255, 26, 128, 182));
+            canvas.drawColor(Color.argb(255, 0, 0, 0));
 
             // Choose the brush color for drawing
             paint.setColor(Color.argb(255, 255, 255, 255));
 
-            bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.background4);
+           /* bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.background4);
             bitmapback = Bitmap.createScaledBitmap(bitmapback, (int) (screenX), (int) (screenY), false);
 
             //  canvas.drawBitmap(background.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
             //  draw the defender bullets
             canvas.drawBitmap(bitmapback, 0,  0, paint);
+
+            */
 
             for (int i = 0; i < bulletList.size(); i++) {
                 if (bulletList.get(i).getStatus())
