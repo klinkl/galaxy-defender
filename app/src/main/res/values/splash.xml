@@ -12,6 +12,6 @@
 
         <!-- Set the theme of the Activity that directly follows your splash screen. -->
         <!-- Required -->
-        <item name="postSplashScreenTheme">@style/Theme.AppCompat.Light.NoActionBar.FullScreen</item>
+        //<item name="postSplashScreenTheme">@style/Theme.AppCompat.NoActionBar</item>
     </style>
 </resources>

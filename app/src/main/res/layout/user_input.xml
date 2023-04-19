@@ -32,14 +32,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="#330022"
-            android:textSize="100sp" />
+
+        <ImageView
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:src="@drawable/logo_fullsize"
+            />
 
         <TextView
             android:id="@+id/welcome"
@@ -48,24 +50,20 @@
             android:text="Welcome, Defender!"
             android:textAlignment="center"
             android:textColor="#FFBB86FC"
-            android:textSize="55sp"
+            android:textSize="35sp"
             android:textStyle="bold"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="#330022"
-            android:textSize="100sp" />
 
         <EditText
             android:id="@+id/inputText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter your name here"
+            android:hint="Please enter your name here"
+            android:textAlignment="center"
             android:textColorHint="#FFFFFF"
             android:textSize="20sp"
-            android:textColor="#FFBB86FC"/>
+            android:textColor="#FFBB86FC"
+            android:paddingTop="20dp"/>
 
         <TextView
             android:layout_width="wrap_content"
