@@ -31,6 +31,15 @@ public class Boss extends Invader {
         return hp;
     }
 
+    public boolean isInvincible() {
+        return isInvincible;
+    }
+
+    public void setInvincible(boolean invincible) {
+        isInvincible = invincible;
+    }
+
+    private boolean isInvincible = true;
 
     public Stage getCurrentStage() {
         return currentStage;
@@ -122,9 +131,10 @@ public class Boss extends Invader {
         //System.out.println("Y: " + getY());
         if (getY() <= (screenY - currentBitmap.getHeight()) / 4) {
 
-            setY(getY() + 2);
+            setY(getY() + 5);
             movingState = movingState.DOWN;
         } else {
+            setInvincible(false);
             float diff = this.getSpeed();
             if (spaceship.getX() + spaceship.getLength() / 2 > this.getX() + this.getLength() / 2) {
                 movingState = movingState.RIGHT;
@@ -145,16 +155,12 @@ public class Boss extends Invader {
         }
     }
 
-    public void spawnEnemies(ArrayList<Enemy> enemyArrayList) {
-
-    }
-
     public void drawHealthBar(Canvas canvas, Paint paint) {
         paint.setColor(Color.GRAY);
         float diff = (getMaxhp() - getLength()) / 2;
-        canvas.drawRect(getX() - diff, getY() - 50, getX() + getMaxhp(), getY() - 20, paint);
+        canvas.drawRect(getX() - diff, getY() - 50, getX() - diff + getMaxhp(), getY() - 20, paint);
         paint.setColor(Color.RED);
-        canvas.drawRect(getX() - diff, getY() - 50, getX() + getHp(), getY() - 20, paint);
+        canvas.drawRect(getX() - diff, getY() - 50, getX() - diff + getHp(), getY() - 20, paint);
     }
 
     public void setHp(float hp) {

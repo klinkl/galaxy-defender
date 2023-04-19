@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
@@ -63,7 +64,9 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     public int score = 0;
 
     // Lives
-    private int lives = 0;
+
+    private int lives = 5;
+
 
     long lastTime = 0;
     private Spaceship spaceShip;
@@ -71,6 +74,7 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private ArrayList<Bullet> bossBulletList = new ArrayList<Bullet>();
     private Bitmap bitmapback;
 
+    private ArrayList<Explosion> explosionArrayList = new ArrayList<Explosion>();
     private Boss boss;
 
     int level = 0;
@@ -81,7 +85,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     int totalMeteors;
     boolean meteorIsActive;
-
+    MediaPlayer mediaPlayer;
+    MediaPlayer musicPlayer;
     // This special constructor method runs
     public SpaceGameView(Context context, int x, int y) {
 
@@ -107,9 +112,25 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         display.getSize(point);
         totalMeteors = 0;
         meteorIsActive = false;
+
+        playMusic();
+
         initLevel();
     }
-
+    public void playMusic(){
+            musicPlayer = MediaPlayer.create(context, R.raw.skyfire);
+            musicPlayer.start();
+            musicPlayer.setLooping(true);
+            musicPlayer.setVolume((float)0.4,(float)0.4);
+    }
+public void playExplosion(){
+        mediaPlayer = MediaPlayer.create(context, R.raw.explosion);
+        mediaPlayer.start();
+}
+public void playShoot(){
+    mediaPlayer = MediaPlayer.create(context, R.raw.alienshoot1);
+    mediaPlayer.start();
+}
     private void initLevel() {
 
         spaceShip = new Spaceship(context, screenX, screenY);
@@ -241,6 +262,15 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         }
 
         checkCollisions();
+        int i=0;
+        while( i<explosionArrayList.size()){
+            explosionArrayList.get(i).update();
+            if (explosionArrayList.get(i).getCurrentFrame()>63) {
+                explosionArrayList.remove(i);
+                i--;
+            }
+            i++;
+        }
     }
 
     private void checkCollisions() {
@@ -343,8 +373,12 @@ public class SpaceGameView extends SurfaceView implements Runnable {
         i = 0;
         while ( i < bulletList.size()) {
             if (boss != null) {
-                if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect()) && boss.isActive()) {
+                if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect()) && boss.isActive() && (!boss.isInvincible())) {
                     boss.setHp(boss.getHp() - 20);
+                    if (boss.getHp()<0.1* boss.getMaxhp()){
+                        explosionArrayList.add(new Explosion(context, (int)(bulletList.get(i).getActualRect().left-64),(int)(bulletList.get(i).getActualRect().top-64)));
+                        playExplosion();
+                    }
                     bulletList.remove(i);
                     continue;
                 }
@@ -358,6 +392,8 @@ public class SpaceGameView extends SurfaceView implements Runnable {
                         if (enemy.getStatus()) {
                             RectF enemyRect = enemy.getActualRect();
                             if (RectF.intersects(bullet.getActualRect(), enemyRect)) {
+                                explosionArrayList.add(new Explosion(context, (int)(enemyRect.left),(int)(enemyRect.top)));
+                                playExplosion();
                                 // Bullet and enemy have collided
                                 bullet.setInactive();
                                 enemies.get(j).setInactive();
@@ -445,19 +481,18 @@ private void drawdebug() {
             canvas.drawRect(bossBulletList.get(i).getActualRect(), paint);
         canvas.drawBitmap(bossBulletList.get(i).getCurrentBitmap(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
     }
-    /*if (boss != null) {
+    if (boss != null) {
         canvas.drawRect(boss.getActualRect(), paint);
         canvas.drawBitmap(boss.getCurrentBitmap(), boss.getX(), boss.getY(), paint);
     }
-         */
 
-    /*for (int i = 0; i < enemies.size(); i++) {
+
+    for (int i = 0; i < enemies.size(); i++) {
         if (enemies.get(i).getStatus())
             canvas.drawRect(enemies.get(i).getActualRect(), paint);
         canvas.drawBitmap(enemies.get(i).getCurrentBitmap(), enemies.get(i).getX(), enemies.get(i).getY(), paint);
     }
 
-     */
     canvas.drawRect(spaceShip.getActualRect(), paint);
     canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
@@ -530,6 +565,9 @@ private void drawdebug() {
                     canvas.drawBitmap(enemy.getCurrentBitmap(), enemy.getX(), enemy.getY(), paint);
                 }
             }
+            for (int i =0; i< explosionArrayList.size(); i++){
+                canvas.drawBitmap(explosionArrayList.get(i).getCurrentBitmap(),explosionArrayList.get(i).getX(),explosionArrayList.get(i).getY(), paint);
+            }
             for (int i = 0; i < bossBulletList.size(); i++) {
                 if (bossBulletList.get(i).getStatus())
                     canvas.drawBitmap(bossBulletList.get(i).getCurrentBitmap(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
@@ -590,7 +628,9 @@ private void drawdebug() {
     }
 
     public void shoot() {
-      spaceShip.shoot(bulletList, context, spaceShip);
+      if (spaceShip.shoot(bulletList, context, spaceShip)){
+          playShoot();
+      }
     }
 
     // If SpaceGameActivity is paused/stopped

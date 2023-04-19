@@ -87,14 +87,16 @@ long lastTime = 0;
                 (motionEvent.getY() - getHeight()/2));
     }
 
-    public void shoot(ArrayList<Bullet> bulletList, Context context, Spaceship spaceShip) {
+    public boolean shoot(ArrayList<Bullet> bulletList, Context context, Spaceship spaceShip) {
         if (LocalTime.now().toNanoOfDay() / 1000000 - lastTime >= 1000) {
             bulletList.add(new Bullet(context, screenY, screenX,MovingState.UP,spaceShip.getX()+( spaceShip.getLength() /6)
                     , spaceShip.getY() + spaceShip.getHeight() / 2));
             bulletList.get(bulletList.size() - 1).shoot();
 
             lastTime = LocalTime.now().toNanoOfDay() / 1000000;
+            return true;
         }
+        else return false;
     }
 
 
