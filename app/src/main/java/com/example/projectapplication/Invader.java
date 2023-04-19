@@ -22,8 +22,8 @@ public abstract class Invader extends Entity {
         Invader.lastBulletTime = lastBulletTime;
     }
 
-    private static int bulletfrequency;
-    private static long lastBulletTime;
+    protected static int bulletfrequency;
+    protected static long lastBulletTime;
 
 
     public abstract void shoot(ArrayList<Bullet> bulletlist, Context context, Spaceship player);

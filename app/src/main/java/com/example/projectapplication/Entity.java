@@ -5,9 +5,9 @@ import android.graphics.RectF;
 
 public abstract class Entity {
 
-    Bitmap currentBitmap;
-   float height;
-    float length;
+    protected Bitmap currentBitmap;
+    protected float height;
+    protected float length;
 
     public float getX() {
         return x;
@@ -25,8 +25,8 @@ public abstract class Entity {
         this.y = y;
     }
 
-    float x;
-    float y;
+    protected float x;
+    protected float y;
 
     public float getSpeed() {
         return speed;
@@ -36,14 +36,14 @@ public abstract class Entity {
         this.speed = speed;
     }
 
-    float speed;
+    protected float speed;
 
 
-    int screenX;
-    int screenY;
-    MovingState movingState;
-    RectF rectF;
-   boolean   isActive;
+    protected int screenX;
+    protected int screenY;
+    protected MovingState movingState;
+    protected RectF rectF;
+    protected boolean   isActive;
 
 
     public Bitmap getCurrentBitmap() {
