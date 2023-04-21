@@ -117,6 +117,8 @@ public class Enemy extends Invader {
         setSpeed(400);
         setRageMode(true);
     }
+
+    @Override
     public void shoot(ArrayList<Bullet> bulletlist, Context context, Spaceship player) {
         Random random = new Random();
         int probability = 10; // 10% chance of dropping a bullet
