@@ -141,7 +141,7 @@ public void playShoot(){
         boss = new Boss(context, screenX, screenY);
         //bulletList.add(new Bullet(context, screenY, screenX));
         //finns
-        for (int i=0;i<5;i++) {
+        for (int i=0;i<7;i++) {
             Meteor meteor = new Meteor(context);
             meteors.add(meteor);
         }
@@ -175,7 +175,7 @@ public void playShoot(){
 
                 if (level == 2){
                    if (enemies.isEmpty() && System.currentTimeMillis() > enemiesDiedTime + 5000) {
-                        startMeteorShower(10);
+                        startMeteorShower(105);
                    }
                 }
                 if (level ==3){
@@ -245,7 +245,7 @@ public void playShoot(){
             }
             // change direction and move down if enemy hits border
             if (hit) {
-                Enemy.increaseFrequency();
+                Enemy.increaseBulletFrequency();
                 for (int i = 0; i < enemies.size(); i++){
                     Enemy enemy = enemies.get(i);
                     enemy.changeDirection();
@@ -566,7 +566,7 @@ private void drawdebug() {
                     meteors.get(i).getX() > 1000 ||
                     meteors.get(i).getX() < -200) {
                 meteors.get(i).resetPosition();
-                score+=10;
+                score+=5;
                 if(totalMeteors > maxMeteors - meteors.size() -1) {
                     meteors.remove(i);
                 }

@@ -106,7 +106,7 @@ public class Enemy extends Invader {
         rectF.left = x;
         rectF.right = x + length;
     }
-    public static void increaseFrequency() {
+    public static void increaseBulletFrequency() {
         if (getBulletfrequency()>= 750){
             setBulletfrequency(getBulletfrequency() - 50);
         }

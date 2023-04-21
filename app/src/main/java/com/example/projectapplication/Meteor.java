@@ -22,8 +22,8 @@ public class Meteor extends Entity{
         this.random = random;
     }
 
-    int meteorOffset;
-    Random random;
+    private int meteorOffset;
+    private Random random;
 
     public Meteor (Context context) {
 
@@ -36,17 +36,17 @@ public class Meteor extends Entity{
         x = random.nextInt(600);
 
         y = random.nextInt(600) * -1;
-        speed = 20 + random.nextInt(16);
+        speed = 15 + random.nextInt(5);
         meteorOffset = random.nextInt(40) - 20;
         if (x <= 150) {
             x = -100;
             y = random.nextInt(150) + 50;
-            meteorOffset = random.nextInt(40) + 20;
+            meteorOffset = random.nextInt(20) + 10;
         }
         if (x >= 450) {
             x = 1000;
             y = random.nextInt(150) + 50;
-            meteorOffset = (random.nextInt(40) +20) *-1;
+            meteorOffset = (random.nextInt(20) +10) *-1;
         }
     }
 
