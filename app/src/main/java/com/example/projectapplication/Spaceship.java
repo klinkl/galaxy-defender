@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Spaceship extends Entity{
 
-long lastTime = 0;
+private long lastTime = 0;
     public Spaceship(Context context, int screenX, int screenY){
 
         rectF = new RectF();
@@ -30,9 +30,6 @@ long lastTime = 0;
                 (int) (height),
                 false);
 
-        //  bitmapup = BitmapFactory.decodeResource(context.getResources(), R.drawable.spaceshipup);
-        //  bitmapup = Bitmap.createScaledBitmap(bitmapup, (int) (length), (int) (height),false);
-
         this.screenX = screenX;
         this.screenY = screenY;
     }
@@ -47,10 +44,6 @@ long lastTime = 0;
     }
 
 
-    public RectF getRect(){
-        return rectF;
-    }
-
     public RectF getActualRect(){
         //0.43 is the difference between actual size and png size
         int diffx= (int)(0.43 * getLength());
@@ -58,28 +51,6 @@ long lastTime = 0;
         return new RectF(getX()+ diffx/2, getY()+ diffy/2,
                 getX()+getLength()-diffx/2, getY()+getHeight()-diffy/2);
     }
-    public Bitmap getBitmap(){
-
-        return currentBitmap;
-    }
-
-    public float getX(){
-        return x;
-    }
-    public void setX(int x) {
-        this.x = x;
-    }
-    public float getY(){
-        return y;
-    }
-    public void setY(int y){
-        this.y = y;
-    }
-    public float getLength(){
-        return length;
-    }
-
-
     public void move(MotionEvent motionEvent) {
         setX((int)
                 (motionEvent.getX() - getLength() /2));
@@ -99,9 +70,5 @@ long lastTime = 0;
         else return false;
     }
 
-
-    public float getHeight(){
-        return height;
-    }
 
 }

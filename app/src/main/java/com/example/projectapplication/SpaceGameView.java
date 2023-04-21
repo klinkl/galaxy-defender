@@ -24,13 +24,13 @@ import java.util.ArrayList;
 
 public class SpaceGameView extends SurfaceView implements Runnable {
 
-    long enemiesDiedTime = 0;
-    long meteorsVanishedTime = 0;
+    private long enemiesDiedTime = 0;
+    private long meteorsVanishedTime = 0;
 
     private int numEnemies = 0;
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private ArrayList<Bullet> enemyBullets = new ArrayList<>();
-    Handler handler;
+    private Handler handler;
     private Context context;
 
     // This is our thread
@@ -61,14 +61,14 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private int screenY;
 
     // The score
-    public int score = 0;
+    private int score = 0;
 
     // Lives
 
     private int lives = 5;
 
 
-    long lastTime = 0;
+    private long lastTime = 0;
     private Spaceship spaceShip;
     private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     private ArrayList<Bullet> bossBulletList = new ArrayList<Bullet>();
@@ -77,16 +77,16 @@ public class SpaceGameView extends SurfaceView implements Runnable {
     private ArrayList<Explosion> explosionArrayList = new ArrayList<Explosion>();
     private Boss boss;
 
-    int level = 0;
+    private int level = 0;
 
 //Finns
     private ArrayList<Meteor> meteors;
 
 
-    int totalMeteors;
-    boolean meteorIsActive;
-    MediaPlayer mediaPlayer;
-    MediaPlayer musicPlayer;
+    private int totalMeteors;
+    private boolean meteorIsActive;
+    private MediaPlayer mediaPlayer;
+    private MediaPlayer musicPlayer;
     // This special constructor method runs
     public SpaceGameView(Context context, int x, int y) {
 
@@ -143,8 +143,6 @@ public void playShoot(){
         }
 
 
-        enemies = new ArrayList<>();
-
         // screenX / length of two enemies
         int numColumns = screenX / (2 * screenX / 10);
         // Create the enemies and add them to the list
@@ -180,14 +178,11 @@ public void playShoot(){
                     if (!boss.isActive()){
                         Invader.setLastBulletTime(0);
                     }
-                    if (meteors.isEmpty() && System.currentTimeMillis() > meteorsVanishedTime + 10000) {
+                    if (meteors.isEmpty() && System.currentTimeMillis() > meteorsVanishedTime + 5000) {
                         boss();
                         if (boss != null) {
                             boss.shoot(bossBulletList, context, spaceShip);
                             boss.move(spaceShip);
-                        }
-                        else {
-                            win();
                         }
                    }
                 }
@@ -230,31 +225,40 @@ public void playShoot(){
         }
 
         // update enemy movement
-        boolean hit = false;
+        if (level == 1){
+            // update enemy movement
+            boolean hit = false;
 
-        for (int i = 0; i < enemies.size(); i++){
-            Enemy enemy = enemies.get(i);
-            //enter RageMode when there are 5 or less enemies
-            if (enemies.size() <= 5){
-                enemy.enterRageMode();
-            }
-            enemy.shoot(enemyBullets, context, spaceShip );
-            enemy.move(fps);
-
-            //check if enemy hits border
-            if (enemy.hitsBorder(fps)){
-                hit = true;
-            };
-        }
-        // change direction and move down if enemy hits border
-       if (hit) {
-            Enemy.increaseFrequency();
             for (int i = 0; i < enemies.size(); i++){
                 Enemy enemy = enemies.get(i);
-                enemy.changeDirection();
-                enemy.moveDown();
+                //enter RageMode when there are 5 or less enemies
+                if (enemies.size() <= 5 && (!enemy.isRageMode())){
+                    enemy.enterRageMode();
+                }
+                //check if enemy hits border
+                if (enemy.hitsBorder(fps)){
+                    hit = true;
+                }
             }
-            hit = false;
+            // change direction and move down if enemy hits border
+            if (hit) {
+                Enemy.increaseFrequency();
+                for (int i = 0; i < enemies.size(); i++){
+                    Enemy enemy = enemies.get(i);
+                    enemy.changeDirection();
+                    enemy.moveDown();
+                    if(enemy.getY() > screenY - screenX / 10){
+                        gameOver();
+                    }
+                }
+            }
+            else {
+                for (int i = 0; i < enemies.size(); i++){
+                    Enemy enemy = enemies.get(i);
+                    enemy.shoot(enemyBullets, getContext(), spaceShip );
+                    enemy.move(fps);
+                }
+            }
         }
 
         if (boss != null) {
@@ -289,7 +293,7 @@ public void playShoot(){
         }
 
 
-        if (level == 1) {
+
             if (System.currentTimeMillis() - lastCollision >= 1000) {
                 for (int i = 0; i < enemies.size(); i++){
                     Enemy enemy = enemies.get(i);
@@ -299,6 +303,7 @@ public void playShoot(){
                             // Game over
                             gameOver();
                         }
+                        enemy.setActive(false);
                         enemies.remove(enemy);
                         if (enemies.isEmpty()){
                             enemiesDiedTime = System.currentTimeMillis();
@@ -308,7 +313,7 @@ public void playShoot(){
                     }
                 }
             }
-        }
+
 
         int i = 0;
         while (i < bossBulletList.size()) {
@@ -329,7 +334,7 @@ public void playShoot(){
                 bossBulletList.remove(i);
                 continue;
             }
-            if (bossBulletList.get(i).getImpactPointX() < 0) {
+            if (bossBulletList.get(i).getX() < 0) {
                 bossBulletList.remove(i);
                 continue;
             }
@@ -339,37 +344,6 @@ public void playShoot(){
             }
             i++;
         }
-        i = 0;
-
-        /*
-        while (i < bulletList.size()) {
-            if (boss != null) {
-                if (RectangleCollison(bulletList.get(i).getActualRect(), boss.getActualRect()) && boss.isActive()) {
-                    boss.setHp(boss.getHp() - 20);
-                    bulletList.remove(i);
-                    continue;
-                }
-            }
-
-            if (bulletList.get(i).getImpactPointY() < 0) {
-                bulletList.remove(i);
-                continue;
-            }
-            if (bulletList.get(i).getImpactPointY() > screenY) {
-                bulletList.remove(i);
-                continue;
-            }
-            if (bulletList.get(i).getImpactPointX() < 0) {
-                bulletList.remove(i);
-                continue;
-            }
-            if (bulletList.get(i).getImpactPointX() > screenX) {
-                bulletList.remove(i);
-                continue;
-            }
-        }
-
-        i++; */
         i = 0;
         while ( i < bulletList.size()) {
             if (boss != null) {
@@ -389,14 +363,14 @@ public void playShoot(){
                     int j = 0;
                     while (j < enemies.size()) {
                         Enemy enemy = enemies.get(j);
-                        if (enemy.getStatus()) {
+                        if (enemy.isActive()) {
                             RectF enemyRect = enemy.getActualRect();
                             if (RectF.intersects(bullet.getActualRect(), enemyRect)) {
                                 explosionArrayList.add(new Explosion(context, (int)(enemyRect.left),(int)(enemyRect.top)));
                                 playExplosion();
                                 // Bullet and enemy have collided
                                 bullet.setInactive();
-                                enemies.get(j).setInactive();
+                                enemies.get(j).setActive(false);
                                 bulletList.remove(bullet);
                                 enemies.remove(enemy);
                                 if (enemies.isEmpty()){
@@ -425,7 +399,7 @@ public void playShoot(){
                         bulletList.remove(bullet);
                         continue;
                     }
-                    if (bullet.getImpactPointX() < 0) {
+                    if (bullet.getX() < 0) {
                         bullet.setInactive();
                         bulletList.remove(bullet);
                         continue;
@@ -488,13 +462,13 @@ private void drawdebug() {
 
 
     for (int i = 0; i < enemies.size(); i++) {
-        if (enemies.get(i).getStatus())
+        if (enemies.get(i).isActive())
             canvas.drawRect(enemies.get(i).getActualRect(), paint);
         canvas.drawBitmap(enemies.get(i).getCurrentBitmap(), enemies.get(i).getX(), enemies.get(i).getY(), paint);
     }
 
     canvas.drawRect(spaceShip.getActualRect(), paint);
-    canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
+    canvas.drawBitmap(spaceShip.getCurrentBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
 }
     public void gameOver(){
@@ -506,12 +480,6 @@ private void drawdebug() {
         ((Activity) context).finish();
         System.out.print("Game Over");
     }
-
-    public void win(){
-        Log.d("App", "You win");
-        playing = false;
-    };
-
 
     public void winGame(){
         paused = true;
@@ -535,15 +503,6 @@ private void drawdebug() {
             // Choose the brush color for drawing
             paint.setColor(Color.argb(255, 255, 255, 255));
 
-           /* bitmapback = BitmapFactory.decodeResource(context.getResources(), R.drawable.background4);
-            bitmapback = Bitmap.createScaledBitmap(bitmapback, (int) (screenX), (int) (screenY), false);
-
-            //  canvas.drawBitmap(background.getBitmap(), spaceShip.getX(), spaceShip.getY() , paint);
-            //  draw the defender bullets
-            canvas.drawBitmap(bitmapback, 0,  0, paint);
-
-            */
-
             for (int i = 0; i < bulletList.size(); i++) {
                 if (bulletList.get(i).getStatus())
                     canvas.drawBitmap(bulletList.get(i).getCurrentBitmap(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
@@ -559,12 +518,14 @@ private void drawdebug() {
                 }
             }
 
-            canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
+            canvas.drawBitmap(spaceShip.getCurrentBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
             // draw all enemies
-            for (Enemy enemy : enemies) {
-                if (enemy.isActive()) {
-                    canvas.drawBitmap(enemy.getCurrentBitmap(), enemy.getX(), enemy.getY(), paint);
+            if (level == 1) {
+                for (Enemy enemy : enemies) {
+                    if (enemy.isActive()) {
+                        canvas.drawBitmap(enemy.getCurrentBitmap(), enemy.getX(), enemy.getY(), paint);
+                    }
                 }
             }
             for (int i =0; i< explosionArrayList.size(); i++){
@@ -579,7 +540,7 @@ private void drawdebug() {
                 boss.drawHealthBar(canvas,paint);
             }
 
-            canvas.drawBitmap(spaceShip.getBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
+            canvas.drawBitmap(spaceShip.getCurrentBitmap(), spaceShip.getX(), spaceShip.getY(), paint);
 
             //drawdebug();
             // Draw the score and remaining lives

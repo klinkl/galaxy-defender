@@ -90,12 +90,6 @@ public class Bullet extends Entity {
         }else if (movingState == MovingState.DOWN){
             y = y + speed / fps;
         }
-        else if (movingState == MovingState.RIGHT){
-            x = x + speed / fps;
-        }
-
-        else
-        { x = x - speed / fps;}
 
         // Update rect
         rectF.left = x;

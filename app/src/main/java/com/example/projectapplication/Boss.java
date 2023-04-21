@@ -128,7 +128,6 @@ public class Boss extends Invader {
 
     public void move(Spaceship spaceship) {
         //animation to enter screen
-        //System.out.println("Y: " + getY());
         if (getY() <= (screenY - currentBitmap.getHeight()) / 4) {
 
             setY(getY() + 5);
@@ -165,10 +164,6 @@ public class Boss extends Invader {
 
     public void setHp(float hp) {
         this.hp = hp;
-    }
-
-    public RectF getRect() {
-        return rectF;
     }
 
 

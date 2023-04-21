@@ -19,7 +19,7 @@ public class Enemy extends Invader {
         this.rageMode = rageMode;
     }
 
-    public boolean rageMode = false;
+    private boolean rageMode = false;
     public int getColumn() {
         return column;
     }
@@ -36,8 +36,8 @@ public class Enemy extends Invader {
         this.row = row;
     }
 
-    int column = 0;
-    int row = 0;
+    private int column = 0;
+    private int row = 0;
 
 
     public Enemy(Context context, int row, int column, int screenX, int screenY) {
@@ -46,7 +46,7 @@ public class Enemy extends Invader {
         rectF = new RectF();
 
         length = screenX / 10;
-        height = screenX / 10;
+        height = length;
 
         x = column * (length + length/2 );
         y = row * (height);
@@ -79,13 +79,14 @@ public class Enemy extends Invader {
     }
 
     public void moveRight (float distanceX){
+
         this.x =  getX() + distanceX;
     }
 
     public void moveDown (){
-        this.y = getY() + (getHeight() / 5);
+        this.y = getY() + (getHeight() / 4);
         if (getSpeed() < 300){
-            setSpeed(getSpeed()* 1.05f);
+            setSpeed(getSpeed()* 1.1f);
         }
     }
 
@@ -107,7 +108,7 @@ public class Enemy extends Invader {
 
   public boolean hitsBorder(long fps) {
         float prediction = predictNextX(fps);
-        if (prediction + getLength() >= getScreenX() || prediction <= 0) {
+        if (prediction + getLength() > getScreenX() || prediction < 0) {
             return true;
         } else return false;
     }
@@ -128,14 +129,14 @@ public class Enemy extends Invader {
         rectF.right = x + length;
     }
     public static void increaseFrequency() {
-        if (getBulletfrequency()>= 500){
+        if (getBulletfrequency()>= 750){
             setBulletfrequency(getBulletfrequency() - 50);
         }
     }
 
     public void enterRageMode(){
-        setBulletfrequency(1000);
-        setSpeed(375);
+        setBulletfrequency(500);
+        setSpeed(400);
         setRageMode(true);
     }
     public void shoot(ArrayList<Bullet> bulletlist, Context context, Spaceship player) {
@@ -171,13 +172,6 @@ public class Enemy extends Invader {
     }
 
 
-    public void setInactive() {
-        setActive(false);
-    }
-
-    public boolean getStatus() {
-        return isActive();
-    }
 
 
 
