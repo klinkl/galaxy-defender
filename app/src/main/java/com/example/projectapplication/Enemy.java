@@ -63,7 +63,7 @@ public class Enemy extends Invader {
 
     public void moveDown (){
         this.y = getY() + (getHeight() / 4);
-        if (getSpeed() < 300){
+        if (getSpeed() < 200){
             setSpeed(getSpeed()* 1.1f);
         }
     }

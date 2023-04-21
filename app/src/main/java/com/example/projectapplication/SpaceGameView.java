@@ -212,19 +212,19 @@ public void playShoot(){
 
 
         for (int i = 0; i < bossBulletList.size(); i++) {
-            if (bossBulletList.get(i).getStatus())
+            if (bossBulletList.get(i).isActive())
                 bossBulletList.get(i).update(fps);
         }
 
         for (int i = 0; i < bulletList.size(); i++) {
-            if (bulletList.get(i).getStatus())
+            if (bulletList.get(i).isActive())
                 bulletList.get(i).update(fps);
         }
 
 
         //Update enemybulletList
         for (int i = 0; i < enemyBullets.size(); i++) {
-            if (enemyBullets.get(i).getStatus())
+            if (enemyBullets.get(i).isActive())
                 enemyBullets.get(i).update(fps);
         }
 
@@ -361,7 +361,7 @@ public void playShoot(){
                 }
             }
                Bullet bullet = bulletList.get(i);
-                if (bulletList.get(i).getStatus()) {
+                if (bulletList.get(i).isActive()) {
                     RectF bulletRect = bulletList.get(i).getActualRect();
                     int j = 0;
                     while (j < enemies.size()) {
@@ -372,7 +372,7 @@ public void playShoot(){
                                 explosionArrayList.add(new Explosion(context, (int)(enemyRect.left),(int)(enemyRect.top)));
                                 playExplosion();
                                 // Bullet and enemy have collided
-                                bullet.setInactive();
+                                bullet.setActive(false);
                                 enemies.get(j).setActive(false);
                                 bulletList.remove(bullet);
                                 enemies.remove(enemy);
@@ -388,22 +388,22 @@ public void playShoot(){
                     }
                     // Check if bullet has gone out of the screen
                     if (bullet.getActualRect().bottom < 0) {
-                        bullet.setInactive();
+                        bullet.setActive(false);
                         bulletList.remove(bullet);
                         continue;
                     }
                     if (bullet.getImpactPointY() < 0) {
-                        bullet.setInactive();
+                        bullet.setActive(false);
                         bulletList.remove(bullet);
                         continue;
                     }
                     if (bullet.getImpactPointX() > screenX) {
-                        bullet.setInactive();
+                        bullet.setActive(false);
                         bulletList.remove(bullet);
                         continue;
                     }
                     if (bullet.getX() < 0) {
-                        bullet.setInactive();
+                        bullet.setActive(false);
                         bulletList.remove(bullet);
                         continue;
                     }
@@ -415,11 +415,11 @@ public void playShoot(){
         // Check for enemy bullet collisions with spaceship
         while( i < enemyBullets.size()) {
             Bullet enemyBullet = enemyBullets.get(i);
-            if (enemyBullet.getStatus()) {
+            if (enemyBullet.isActive()) {
                 RectF enemyBulletRect = enemyBullet.getActualRect();
                 if (RectF.intersects(enemyBulletRect, spaceShip.getActualRect())) {
                     // Enemy bullet has hit the spaceship
-                    enemyBullet.setInactive();
+                    enemyBullet.setActive(false);
                     enemyBullets.remove(enemyBullet);
                     lives--;
                     if (lives == 0) {
@@ -429,7 +429,7 @@ public void playShoot(){
                 }
                 // Check if enemy bullet has gone out of the screen
                 if (enemyBulletRect.top > screenY) {
-                    enemyBullet.setInactive();
+                    enemyBullet.setActive(false);
                     enemyBullets.remove(enemyBullet);
                 }
             }
@@ -448,15 +448,15 @@ private void boss(){
 private void drawdebug() {
     paint.setColor(Color.WHITE);
     for (int i = 0; i < bulletList.size(); i++) {
-        if (bulletList.get(i).getStatus())
+        if (bulletList.get(i).isActive())
             canvas.drawRect(bulletList.get(i).getActualRect(), paint);
-        canvas.drawBitmap(bulletList.get(i).getCurrentBitmap(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
+        canvas.drawBitmap(bulletList.get(i).getCurrentBitmap(), bulletList.get(i).getRectF().left, bulletList.get(i).getRectF().top, paint);
 
     }
     for (int i = 0; i < bossBulletList.size(); i++) {
-        if (bossBulletList.get(i).getStatus())
+        if (bossBulletList.get(i).isActive())
             canvas.drawRect(bossBulletList.get(i).getActualRect(), paint);
-        canvas.drawBitmap(bossBulletList.get(i).getCurrentBitmap(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
+        canvas.drawBitmap(bossBulletList.get(i).getCurrentBitmap(), bossBulletList.get(i).getRectF().left, bossBulletList.get(i).getRectF().top, paint);
     }
     if (boss != null) {
         canvas.drawRect(boss.getActualRect(), paint);
@@ -507,13 +507,13 @@ private void drawdebug() {
             paint.setColor(Color.argb(255, 255, 255, 255));
 
             for (int i = 0; i < bulletList.size(); i++) {
-                if (bulletList.get(i).getStatus())
-                    canvas.drawBitmap(bulletList.get(i).getCurrentBitmap(), bulletList.get(i).getRect().left, bulletList.get(i).getRect().top, paint);
+                if (bulletList.get(i).isActive())
+                    canvas.drawBitmap(bulletList.get(i).getCurrentBitmap(), bulletList.get(i).getRectF().left, bulletList.get(i).getRectF().top, paint);
             }
 
             for (int i = 0; i < enemyBullets.size(); i++) {
-                if (enemyBullets.get(i).getStatus())
-                    canvas.drawBitmap(enemyBullets.get(i).getCurrentBitmap(), enemyBullets.get(i).getRect().left, enemyBullets.get(i).getRect().top, paint);
+                if (enemyBullets.get(i).isActive())
+                    canvas.drawBitmap(enemyBullets.get(i).getCurrentBitmap(), enemyBullets.get(i).getRectF().left, enemyBullets.get(i).getRectF().top, paint);
             }
             if (!meteors.isEmpty() && meteorIsActive == true) {
                 for (int i=0;i<meteors.size();i++) {
@@ -535,8 +535,8 @@ private void drawdebug() {
                 canvas.drawBitmap(explosionArrayList.get(i).getCurrentBitmap(),explosionArrayList.get(i).getX(),explosionArrayList.get(i).getY(), paint);
             }
             for (int i = 0; i < bossBulletList.size(); i++) {
-                if (bossBulletList.get(i).getStatus())
-                    canvas.drawBitmap(bossBulletList.get(i).getCurrentBitmap(), bossBulletList.get(i).getRect().left, bossBulletList.get(i).getRect().top, paint);
+                if (bossBulletList.get(i).isActive())
+                    canvas.drawBitmap(bossBulletList.get(i).getCurrentBitmap(), bossBulletList.get(i).getRectF().left, bossBulletList.get(i).getRectF().top, paint);
             }
             if (boss != null && boss.isActive()) {
                 canvas.drawBitmap(boss.getCurrentBitmap(), boss.getX(), boss.getY(), paint);

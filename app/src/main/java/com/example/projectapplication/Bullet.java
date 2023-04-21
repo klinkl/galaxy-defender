@@ -104,21 +104,7 @@ public class Bullet extends Entity {
         return new RectF(getX()+ diffx/2, getY()+ diffy/2,
                 getX()+getLength()-diffx/2, getY()+getHeight()-diffy/2);
     }
-    public RectF getRect(){
-        return  rectF;
-    }
 
-    public boolean getStatus(){
-        return isActive;
-    }
-
-    public void setInactive(){
-        isActive = false;
-    }
-
-public RectF getCenter(){
-        return new RectF(x+getCurrentBitmap().getWidth()/2,y+getCurrentBitmap().getHeight()/2,0,0);
-}
 
     public float getImpactPointY() {
         if (movingState == MovingState.DOWN) {
