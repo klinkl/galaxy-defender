@@ -11,33 +11,9 @@ import java.util.Random;
 
 public class Enemy extends Invader {
 
-    public boolean isRageMode() {
-        return rageMode;
-    }
-
-    public void setRageMode(boolean rageMode) {
-        this.rageMode = rageMode;
-    }
-
-    private boolean rageMode = false;
-    public int getColumn() {
-        return column;
-    }
-
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
     private int column = 0;
     private int row = 0;
+    private boolean rageMode = false;
 
 
     public Enemy(Context context, int row, int column, int screenX, int screenY) {
@@ -45,9 +21,11 @@ public class Enemy extends Invader {
         //blank RectF for collisionTesting
         rectF = new RectF();
 
+        // Set dimensions of the sprite ( square)
         length = screenX / 10;
         height = length;
 
+        //Positioning based on column, sprite dimensions and padding
         x = column * (length + length/2 );
         y = row * (height);
 
@@ -170,6 +148,33 @@ public class Enemy extends Invader {
         return new RectF(getX()+ diffx/2, getY()+ diffy/2,
                 getX()+getLength()-diffx/2, getY()+getHeight()-diffy/2);
     }
+
+
+    public boolean isRageMode() {
+        return rageMode;
+    }
+
+    public void setRageMode(boolean rageMode) {
+        this.rageMode = rageMode;
+    }
+
+
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
 
 
 

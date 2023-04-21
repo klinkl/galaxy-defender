@@ -24,10 +24,12 @@ import java.util.ArrayList;
 
 public class SpaceGameView extends SurfaceView implements Runnable {
 
+    // Used for level transitioning
     private long enemiesDiedTime = 0;
+
+    // Used for level transitioning
     private long meteorsVanishedTime = 0;
 
-    private int numEnemies = 0;
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private ArrayList<Bullet> enemyBullets = new ArrayList<>();
     private Handler handler;
@@ -67,24 +69,26 @@ public class SpaceGameView extends SurfaceView implements Runnable {
 
     private int lives = 5;
 
+    // Current Level
+    private int level = 0;
 
-    private long lastTime = 0;
     private Spaceship spaceShip;
     private ArrayList<Bullet> bulletList = new ArrayList<Bullet>();
     private ArrayList<Bullet> bossBulletList = new ArrayList<Bullet>();
-    private Bitmap bitmapback;
 
     private ArrayList<Explosion> explosionArrayList = new ArrayList<Explosion>();
     private Boss boss;
 
-    private int level = 0;
 
-//Finns
+
+    //Finn's Meteors
     private ArrayList<Meteor> meteors;
 
 
     private int totalMeteors;
     private boolean meteorIsActive;
+
+    // Media Player
     private MediaPlayer mediaPlayer;
     private MediaPlayer musicPlayer;
     // This special constructor method runs
@@ -226,7 +230,6 @@ public void playShoot(){
 
         // update enemy movement
         if (level == 1){
-            // update enemy movement
             boolean hit = false;
 
             for (int i = 0; i < enemies.size(); i++){
